@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "DataMining2023",
     "section": "",
-    "text": "Ce document est la troisième version d’un cours de Data Mining dispensé aux étudiants de deuxième année de l’ option Data Mining du master MECI .\nIl est basé sur R version 4.0.2 (2020-06-22).\nCe document est régulièrement corrigé et mis à jour. La version de référence est disponible en ligne à l’adresse :\n\nhttps://cgrasland.gitpages.huma-num.fr/datamining2022/.\n\nPour toute suggestion ou correction, il est possible de me contacter par mail"
+    "text": "Ce document est la troisième version d’un cours de Data Mining dispensé aux étudiants de deuxième année de l’ option Data Mining du master MECI .\nIl est basé sur R version 4.0.2 (2020-06-22).\nCe document est régulièrement corrigé et mis à jour. La version de référence est disponible en ligne à l’adresse :\n\nhttps://claudegrasland.github.io/datamining2023/.\n\nPour toute suggestion ou correction, il est possible de me contacter par mail"
   },
   {
     "objectID": "index.html#prérequis",
