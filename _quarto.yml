@@ -2,12 +2,22 @@ project:
   type: website
   output-dir: docs
   
+render:
+      - index.qmd
+      - 10-API-INTRO.qmd
+      - 11-API-OPENDATASOFT.qmd
+      - 12-API-INSEE.qmd
+
+  
 website:
   title: "DataMining2023"
   navbar:
     left:
       - href: index.qmd
         text: Home
+      - 10-API-INTRO.qmd
+      - 11-API-OPENDATASOFT.qmd
+      - 12-API-INSEE.qmd
 
 format:
   html:
