@@ -1,0 +1,26 @@
+---
+title: "CARTO-Intro"
+author: "Claude Grasland"
+format: html
+embed-resources: true
+---
+
+
+```{r, comment = F, warning = F, message = F}
+library(knitr,warn.conflicts = T,quietly = T)
+library(dplyr, warn.conflicts = T,quietly = T)
+
+```
+
+
+```{r apischema, echo=FALSE}
+knitr::include_graphics("img/API.jpeg")
+```
+
+La représentation cartographiques de données spatiales dans R s'est beucoup développée depuis quelques années et on dispose désormais de packages de très bonne qualité pour réaliser des cartes statiques destyinées à la publication ou des cartes dynamiques destinées aux interfaces web. 
+
+Dans le cadre de ce cours, on se limitera à la présentation de trois questions, chacune associée à la maîtrise d'un package :
+
+1. Acquisition de données spatiales et mise en forme (sf)
+2. Cartographie statique pour l'édition (mapsf)
+3. Cartographie dynamique pour le web (mapview)

@@ -1,0 +1,243 @@
+---
+title: "CARTO-sf"
+author: "Claude Grasland"
+format: html
+embed-resources: true
+---
+
+```{r}
+# packages utilitaires
+library(knitr)
+library(dplyr)
+library(jsonlite)
+
+# Data packages
+library(wbstats)
+library(rnaturalearth)
+
+# Packages cartographiques
+library(sf)
+library(geojsonsf)
+library(mapsf)
+
+```
+
+L'importation et l'exportation de données spatiales peut se faire de différentes manières qui sont illustrées dans trois exemples. L'important est d'aboutir à un fichier de type **sf (spatial features)** combinant les données géométriques et les données statistiques dans un seul objet. Une fois créé, cet obet sera stocké au format interne de R (.RDS). 
+
+
+## Importation d'un shapefile
+
+### Carte au format shapefile
+
+Beaucoup de fonds de cartes sont stockés au format shapefile, utilisé dans les systèmes d'information géographiques (SIG). Un shapefile se compose en réalité de trois ou quatre fichiers correspondant la géométrie (*fic.shp*), à la projection (*fic.prj*), aux données attributaires (*fic.dbf*), etc..
+
+On charge le fonds de carte au format shapefile avec la fonction `st_read()` du package **sf**. On ne lui indique que le nom du fichier de géométrie et il lit automatiquement les autres.
+
+```{r}
+map<-st_read("carto/europe88/euro1988_map.shp")
+```
+
+Le fichier est au format *sf* qui est le format cartographique de R. Il comporte une colonne spéciale appelée **geometry**.
+
+```{r}
+class(map)
+head(map)
+```
+On peut visualiser la carte enb effectuant un plot de la colonne geometry :
+
+```{r}
+plot(map$geometry)
+```
+
+### Données au format .csv
+
+```{r}
+don<-read.table("carto/europe88/euro1988.csv",
+                sep=";",
+                header=T,
+                encoding = "UTF-8")
+class(don)
+head(don)
+```
+
+### Jointure
+
+```{r}
+mapdon<-merge(map,don,by.x="ISO3",by.y="PAYS",all.x=T,all.y=T)
+class(mapdon)
+head(mapdon)
+```
+
+### Essai de cartographie
+
+
+```{r}
+plot(mapdon["PNB"])
+```
+
+### Sauvegarde du fichier sf
+
+```{r}
+saveRDS(mapdon,"carto/europe88/europe88_sf.RDS")
+```
+
+
+
+## Importation à l'aide de packages
+
+Nous allons essayer de constituer une carte des émissions de CO2 par habitant des pays d'Afrique en 2018 basée sur la combinaison des données `wbstats` et du fonds de carte `naturalearth`.
+
+### Importation du fonds de carte
+
+On charge le fonds de carte `countries110`du package **rnaturalearth** et on en extrait les pays africains ainsi que deux ou trois variables utiles. On utilise la commande `st_as_sf()`pour passer le fonds de carte du format sp (ancien) au format sf (actuel).
+
+```{r}
+library(rnaturalearth)
+map_world<-(countries110) %>% st_as_sf()
+map<- map_world %>% filter(continent == "Africa") %>%
+          select(iso3=iso_a3,name, subregion)
+kable(head(map))
+class(map)
+
+```
+
+### Projection
+
+Notre carte n'est pas projetée actuellement (les coordonnées sont en latitude et longitude). On modifie son "Coordinate Reference System" pour obtenir des coordonnées planes permettant de calculer des distances.  
+
+```{r}
+map<-st_transform(map,crs = 32631)
+plot(map$geometry)
+```
+
+
+
+### Importation des données statistiques
+
+On importe les données statistiques correspondant aux pays qui ont été retenus dans le fonds de carte.
+
+```{r}
+mycountries<-map$iso3
+df   <- wb_data(indicator  = c("SP.POP.TOTL", "EN.ATM.CO2E.KT"),
+                return_wide = TRUE,
+                start_date = 2018,
+                end_date = 2018,
+                country = mycountries)
+kable(head(df))
+
+```
+
+Nous renommons les variables pour avoir un tableau plus simple ou la population est en millions d'habitants, les émissions de CO2 en millions de tonnes. On y ajoute l'intensité des émissions en tonnes par habitant.
+
+```{r}
+
+don <-df %>% select(iso3 = iso3c,  POP = SP.POP.TOTL, CO2 = EN.ATM.CO2E.KT) %>%
+            mutate(POP = POP/1000000, CO2 = CO2/1000, CO2_hab = CO2/POP)
+kable(head(don),digits = 2)
+
+```
+
+
+
+### Jointure
+
+Puisque les fichiers comportent un même identifiant et un seul, on peut effectuer la jointure avec la fonction `left_join()` du package **dplyr**.
+
+```{r }
+mapdon <- left_join(map,don) %>% st_as_sf()
+kable(head(mapdon))
+```
+
+
+### Essai de cartographie
+
+On réalise ici une belle carte avec le package **mapsf** qui sera expliqué plus loin 
+
+```{r}
+library(mapsf)
+mf_theme("agolalight")
+mapdon %>% 
+  mf_map("CO2_hab", 
+         "choro",
+         breaks="jenks",
+         leg_pos="bottomleft",
+         leg_title = "en tonnes/hab.")%>%
+  mf_map("CO2", 
+         inches = 0.2,
+         "prop",
+         col="red",
+         leg_pos = "topleft",
+         leg_title = "en millions de tonnes")
+mf_title("Emissions de CO2 des pays d''Afrique en 2018")
+
+```
+
+### Sauvegarde du fichier sf
+
+```{r}
+saveRDS(mapdon,"carto/africa/africa_sf.RDS")
+```
+
+
+## Importation au format GEOJSON
+
+La plupart des API permettent de récupérer directement des fichiers combinant les données statistiques et cartographiques au format GEOJSON. Il suffit alors de les convertir au format sf en une seule opération, sans avoir besoin d'effectuer de jointure.
+
+
+### Récupération d'un fichier GEOJSON
+
+On commence par repérer une url permettant de récupérer un fichier de type GeoJSON. Puis on récupère le fichier et on l'enregistre à l'aide de la fonction `dowload.file()` en lui donnat l'extension *.geojson*. Ce fichier pourra être utilisé dans d'autres langages de programmation comme Python.
+
+```{r, eval=FALSE}
+
+
+myurl<- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/georef-france-commune/exports/geojson?lang=fr&refine=reg_name%3A%22%C3%8Ele-de-France%22&timezone=Europe%2FBerlin"
+
+
+
+download.file(url=myurl,
+              destfile="carto/idfcom/idfcom.geojson", 
+              method="curl")
+
+
+```
+
+### Conversion du fichier geojson au format sf
+
+On convertit le fichier geojson au format sf à l'aide de la fonction `geojson_sf()`du package **geojsonsf**. On vérifie que le fichier est bien de la bonne classe 
+
+```{r}
+mapdon<-geojson_sf("carto/idfcom/idfcom.geojson")
+class(mapdon)
+```
+
+### Sélection des variables
+
+On ne conserve que la colonne code et on ajoute une colonne département
+
+```{r}
+mapdon<-mapdon %>% select(com_code) %>% 
+  mutate(com_code = substr(com_code,3,7),
+         depcode = substr(com_code,1,2))
+head(mapdon)
+```
+
+
+
+### Essai de cartographie
+
+
+```{r}
+plot(mapdon["depcode"])
+
+```
+
+
+
+### Sauvegarde au format sf
+
+```{r, eval=FALSE}
+saveRDS(mapdon,"carto/idfcom/idfcom.RDS")
+```
+
+

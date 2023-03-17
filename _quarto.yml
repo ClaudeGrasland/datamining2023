@@ -7,6 +7,9 @@ render:
       - 10-API-INTRO.qmd
       - 11-API-OPENDATASOFT.qmd
       - 12-API-INSEE.qmd
+      - 20-CARTO-INTRO.qmd
+      - 21-CARTO-sf.qmd
+      - 22-CARTO-mapsf.qmd  
 
   
 website:
@@ -18,7 +21,10 @@ website:
       - 10-API-INTRO.qmd
       - 11-API-OPENDATASOFT.qmd
       - 12-API-INSEE.qmd
-
+      - 20-CARTO-INTRO.qmd
+      - 21-CARTO-sf.qmd      
+      - 22-CARTO-mapsf.qmd   
+      
 format:
   html:
     theme: cosmo

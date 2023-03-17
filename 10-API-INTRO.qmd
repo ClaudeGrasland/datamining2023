@@ -58,7 +58,6 @@ Le métier de data analyst implique presque nécessairement l'emploi d'API. Les 
 
 Source : Traduction française d'un billet de [Pascual C., 2020](https://www.dataquest.io/blog/r-api-tutorial/)
 
-Vous pouvez télécharger les exercices correspodant à cette partie du cours en cliquant sur [ce lien]("exos.zip")
 
 
 ## l'API de la NASA

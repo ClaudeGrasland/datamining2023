@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Claude Grasland">
+
+<title>DataMining2023 - CARTO-sf</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">DataMining2023</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./10-API-INTRO.html">Introduction aux API</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./11-API-OPENDATASOFT.html">L’API opendatasoft</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./12-API-INSEE.html">L’API INSEE</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./20-CARTO-INTRO.html">CARTO-Intro</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./21-CARTO-sf.html" aria-current="page">CARTO-sf</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./22-CARTO-mapsf.html">CARTO-mapsf</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#importation-dun-shapefile" id="toc-importation-dun-shapefile" class="nav-link active" data-scroll-target="#importation-dun-shapefile">Importation d’un shapefile</a>
+  <ul class="collapse">
+  <li><a href="#carte-au-format-shapefile" id="toc-carte-au-format-shapefile" class="nav-link" data-scroll-target="#carte-au-format-shapefile">Carte au format shapefile</a></li>
+  <li><a href="#données-au-format-.csv" id="toc-données-au-format-.csv" class="nav-link" data-scroll-target="#données-au-format-.csv">Données au format .csv</a></li>
+  <li><a href="#jointure" id="toc-jointure" class="nav-link" data-scroll-target="#jointure">Jointure</a></li>
+  <li><a href="#essai-de-cartographie" id="toc-essai-de-cartographie" class="nav-link" data-scroll-target="#essai-de-cartographie">Essai de cartographie</a></li>
+  <li><a href="#sauvegarde-du-fichier-sf" id="toc-sauvegarde-du-fichier-sf" class="nav-link" data-scroll-target="#sauvegarde-du-fichier-sf">Sauvegarde du fichier sf</a></li>
+  </ul></li>
+  <li><a href="#importation-à-laide-de-packages" id="toc-importation-à-laide-de-packages" class="nav-link" data-scroll-target="#importation-à-laide-de-packages">Importation à l’aide de packages</a>
+  <ul class="collapse">
+  <li><a href="#importation-du-fonds-de-carte" id="toc-importation-du-fonds-de-carte" class="nav-link" data-scroll-target="#importation-du-fonds-de-carte">Importation du fonds de carte</a></li>
+  <li><a href="#projection" id="toc-projection" class="nav-link" data-scroll-target="#projection">Projection</a></li>
+  <li><a href="#importation-des-données-statistiques" id="toc-importation-des-données-statistiques" class="nav-link" data-scroll-target="#importation-des-données-statistiques">Importation des données statistiques</a></li>
+  <li><a href="#jointure-1" id="toc-jointure-1" class="nav-link" data-scroll-target="#jointure-1">Jointure</a></li>
+  <li><a href="#essai-de-cartographie-1" id="toc-essai-de-cartographie-1" class="nav-link" data-scroll-target="#essai-de-cartographie-1">Essai de cartographie</a></li>
+  <li><a href="#sauvegarde-du-fichier-sf-1" id="toc-sauvegarde-du-fichier-sf-1" class="nav-link" data-scroll-target="#sauvegarde-du-fichier-sf-1">Sauvegarde du fichier sf</a></li>
+  </ul></li>
+  <li><a href="#importation-au-format-geojson" id="toc-importation-au-format-geojson" class="nav-link" data-scroll-target="#importation-au-format-geojson">Importation au format GEOJSON</a>
+  <ul class="collapse">
+  <li><a href="#récupération-dun-fichier-geojson" id="toc-récupération-dun-fichier-geojson" class="nav-link" data-scroll-target="#récupération-dun-fichier-geojson">Récupération d’un fichier GEOJSON</a></li>
+  <li><a href="#conversion-du-fichier-geojson-au-format-sf" id="toc-conversion-du-fichier-geojson-au-format-sf" class="nav-link" data-scroll-target="#conversion-du-fichier-geojson-au-format-sf">Conversion du fichier geojson au format sf</a></li>
+  <li><a href="#sélection-des-variables" id="toc-sélection-des-variables" class="nav-link" data-scroll-target="#sélection-des-variables">Sélection des variables</a></li>
+  <li><a href="#essai-de-cartographie-2" id="toc-essai-de-cartographie-2" class="nav-link" data-scroll-target="#essai-de-cartographie-2">Essai de cartographie</a></li>
+  <li><a href="#sauvegarde-au-format-sf" id="toc-sauvegarde-au-format-sf" class="nav-link" data-scroll-target="#sauvegarde-au-format-sf">Sauvegarde au format sf</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">CARTO-sf</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Claude Grasland </p>
+          </div>
+  </div>
+    
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># packages utilitaires</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attachement du package : 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Les objets suivants sont masqués depuis 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Les objets suivants sont masqués depuis 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Data packages</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(wbstats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: le package 'wbstats' a été compilé avec la version R 4.2.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: le package 'rnaturalearth' a été compilé avec la version R 4.2.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Packages cartographiques</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.9.1, GDAL 3.4.3, PROJ 7.2.1; sf_use_s2() is TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geojsonsf)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapsf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>L’importation et l’exportation de données spatiales peut se faire de différentes manières qui sont illustrées dans trois exemples. L’important est d’aboutir à un fichier de type <strong>sf (spatial features)</strong> combinant les données géométriques et les données statistiques dans un seul objet. Une fois créé, cet obet sera stocké au format interne de R (.RDS).</p>
+<section id="importation-dun-shapefile" class="level2">
+<h2 class="anchored" data-anchor-id="importation-dun-shapefile">Importation d’un shapefile</h2>
+<section id="carte-au-format-shapefile" class="level3">
+<h3 class="anchored" data-anchor-id="carte-au-format-shapefile">Carte au format shapefile</h3>
+<p>Beaucoup de fonds de cartes sont stockés au format shapefile, utilisé dans les systèmes d’information géographiques (SIG). Un shapefile se compose en réalité de trois ou quatre fichiers correspondant la géométrie (<em>fic.shp</em>), à la projection (<em>fic.prj</em>), aux données attributaires (<em>fic.dbf</em>), etc..</p>
+<p>On charge le fonds de carte au format shapefile avec la fonction <code>st_read()</code> du package <strong>sf</strong>. On ne lui indique que le nom du fichier de géométrie et il lit automatiquement les autres.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>map<span class="ot">&lt;-</span><span class="fu">st_read</span>(<span class="st">"carto/europe88/euro1988_map.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `euro1988_map' from data source 
+  `C:\git\datamining2023\carto\europe88\euro1988_map.shp' using driver `ESRI Shapefile'
+Simple feature collection with 25 features and 1 field
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 680158.7 ymin: 576113.9 xmax: 5609069 ymax: 4991631
+Projected CRS: ETRS89-extended / LCC Europe</code></pre>
+</div>
+</div>
+<p>Le fichier est au format <em>sf</em> qui est le format cartographique de R. Il comporte une colonne spéciale appelée <strong>geometry</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "sf"         "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 6 features and 1 field
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 3496766 ymin: 1525952 xmax: 5448053 ymax: 2758691
+Projected CRS: ETRS89-extended / LCC Europe
+  ISO3                       geometry
+1  ALB MULTIPOLYGON (((4777759 184...
+2  AUT MULTIPOLYGON (((4494160 246...
+3  BEL MULTIPOLYGON (((3728385 267...
+4  BGR MULTIPOLYGON (((5260441 208...
+5  CHE MULTIPOLYGON (((3968843 232...
+6  CSK MULTIPOLYGON (((4327916 268...</code></pre>
+</div>
+</div>
+<p>On peut visualiser la carte enb effectuant un plot de la colonne geometry :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(map<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="21-CARTO-sf_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="données-au-format-.csv" class="level3">
+<h3 class="anchored" data-anchor-id="données-au-format-.csv">Données au format .csv</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>don<span class="ot">&lt;-</span><span class="fu">read.table</span>(<span class="st">"carto/europe88/euro1988.csv"</span>,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">sep=</span><span class="st">";"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">header=</span>T,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">encoding =</span> <span class="st">"UTF-8"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(don)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(don)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  PAYS BLOC   PNB  TMI ESP URB NAT MOR FEC JEU VIE SUP  POP       X       Y
+1  ALB  Soc   600 43.0  71  34  27   6 3.3  35   5  29  3.1 4825115 1684833
+2  AUT  Cap 10000 10.3  75  55  12  12 1.4  18  14  84  7.6 4299715 2335579
+3  BEL  Cap  9200  9.7  75  95  12  11 1.5  19  14  31  9.9 3636312 2667243
+4  BGR  Soc  2000 14.5  72  65  13  11 2.0  21  11 111  9.0 5206070 1930219
+5  CHE  Cap 17800  6.8  77  61  12   9 1.5  17  14  41  6.6 3869378 2243130
+6  CSK  Soc  3200 13.9  71  74  14  12 2.0  24  11 128 15.6 4487005 2540281</code></pre>
+</div>
+</div>
+</section>
+<section id="jointure" class="level3">
+<h3 class="anchored" data-anchor-id="jointure">Jointure</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mapdon<span class="ot">&lt;-</span><span class="fu">merge</span>(map,don,<span class="at">by.x=</span><span class="st">"ISO3"</span>,<span class="at">by.y=</span><span class="st">"PAYS"</span>,<span class="at">all.x=</span>T,<span class="at">all.y=</span>T)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(mapdon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "sf"         "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mapdon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 6 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 3496766 ymin: 1525952 xmax: 5448053 ymax: 2758691
+Projected CRS: ETRS89-extended / LCC Europe
+  ISO3 BLOC   PNB  TMI ESP URB NAT MOR FEC JEU VIE SUP  POP       X       Y
+1  ALB  Soc   600 43.0  71  34  27   6 3.3  35   5  29  3.1 4825115 1684833
+2  AUT  Cap 10000 10.3  75  55  12  12 1.4  18  14  84  7.6 4299715 2335579
+3  BEL  Cap  9200  9.7  75  95  12  11 1.5  19  14  31  9.9 3636312 2667243
+4  BGR  Soc  2000 14.5  72  65  13  11 2.0  21  11 111  9.0 5206070 1930219
+5  CHE  Cap 17800  6.8  77  61  12   9 1.5  17  14  41  6.6 3869378 2243130
+6  CSK  Soc  3200 13.9  71  74  14  12 2.0  24  11 128 15.6 4487005 2540281
+                        geometry
+1 MULTIPOLYGON (((4777759 184...
+2 MULTIPOLYGON (((4494160 246...
+3 MULTIPOLYGON (((3728385 267...
+4 MULTIPOLYGON (((5260441 208...
+5 MULTIPOLYGON (((3968843 232...
+6 MULTIPOLYGON (((4327916 268...</code></pre>
+</div>
+</div>
+</section>
+<section id="essai-de-cartographie" class="level3">
+<h3 class="anchored" data-anchor-id="essai-de-cartographie">Essai de cartographie</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mapdon[<span class="st">"PNB"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="21-CARTO-sf_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="sauvegarde-du-fichier-sf" class="level3">
+<h3 class="anchored" data-anchor-id="sauvegarde-du-fichier-sf">Sauvegarde du fichier sf</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(mapdon,<span class="st">"carto/europe88/europe88_sf.RDS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="importation-à-laide-de-packages" class="level2">
+<h2 class="anchored" data-anchor-id="importation-à-laide-de-packages">Importation à l’aide de packages</h2>
+<p>Nous allons essayer de constituer une carte des émissions de CO2 par habitant des pays d’Afrique en 2018 basée sur la combinaison des données <code>wbstats</code> et du fonds de carte <code>naturalearth</code>.</p>
+<section id="importation-du-fonds-de-carte" class="level3">
+<h3 class="anchored" data-anchor-id="importation-du-fonds-de-carte">Importation du fonds de carte</h3>
+<p>On charge le fonds de carte <code>countries110</code>du package <strong>rnaturalearth</strong> et on en extrait les pays africains ainsi que deux ou trois variables utiles. On utilise la commande <code>st_as_sf()</code>pour passer le fonds de carte du format sp (ancien) au format sf (actuel).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearth)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>map_world<span class="ot">&lt;-</span>(countries110) <span class="sc">%&gt;%</span> <span class="fu">st_as_sf</span>()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>map<span class="ot">&lt;-</span> map_world <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">"Africa"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">select</span>(<span class="at">iso3=</span>iso_a3,name, subregion)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(map))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 28%">
+<col style="width: 21%">
+<col style="width: 42%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">iso3</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">subregion</th>
+<th style="text-align: left;">geometry</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AGO</td>
+<td style="text-align: left;">Angola</td>
+<td style="text-align: left;">Middle Africa</td>
+<td style="text-align: left;">MULTIPOLYGON (((16.32653 -5…</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BDI</td>
+<td style="text-align: left;">Burundi</td>
+<td style="text-align: left;">Eastern Africa</td>
+<td style="text-align: left;">MULTIPOLYGON (((29.34 -4.49…</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BEN</td>
+<td style="text-align: left;">Benin</td>
+<td style="text-align: left;">Western Africa</td>
+<td style="text-align: left;">MULTIPOLYGON (((2.691702 6….</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BFA</td>
+<td style="text-align: left;">Burkina Faso</td>
+<td style="text-align: left;">Western Africa</td>
+<td style="text-align: left;">MULTIPOLYGON (((-2.827496 9…</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BWA</td>
+<td style="text-align: left;">Botswana</td>
+<td style="text-align: left;">Southern Africa</td>
+<td style="text-align: left;">MULTIPOLYGON (((25.64916 -1…</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CAF</td>
+<td style="text-align: left;">Central African Rep.</td>
+<td style="text-align: left;">Middle Africa</td>
+<td style="text-align: left;">MULTIPOLYGON (((15.27946 7….</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "sf"         "data.frame"</code></pre>
+</div>
+</div>
+</section>
+<section id="projection" class="level3">
+<h3 class="anchored" data-anchor-id="projection">Projection</h3>
+<p>Notre carte n’est pas projetée actuellement (les coordonnées sont en latitude et longitude). On modifie son “Coordinate Reference System” pour obtenir des coordonnées planes permettant de calculer des distances.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>map<span class="ot">&lt;-</span><span class="fu">st_transform</span>(map,<span class="at">crs =</span> <span class="dv">32631</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(map<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="21-CARTO-sf_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="importation-des-données-statistiques" class="level3">
+<h3 class="anchored" data-anchor-id="importation-des-données-statistiques">Importation des données statistiques</h3>
+<p>On importe les données statistiques correspondant aux pays qui ont été retenus dans le fonds de carte.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mycountries<span class="ot">&lt;-</span>map<span class="sc">$</span>iso3</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>df   <span class="ot">&lt;-</span> <span class="fu">wb_data</span>(<span class="at">indicator  =</span> <span class="fu">c</span>(<span class="st">"SP.POP.TOTL"</span>, <span class="st">"EN.ATM.CO2E.KT"</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">return_wide =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">start_date =</span> <span class="dv">2018</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">end_date =</span> <span class="dv">2018</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">country =</span> mycountries)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in format_wb_country(country, cache = cache): The following country
+values are not valid and are being excluded from the request: ESH,NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 36%">
+<col style="width: 7%">
+<col style="width: 21%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">iso2c</th>
+<th style="text-align: left;">iso3c</th>
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">date</th>
+<th style="text-align: right;">EN.ATM.CO2E.KT</th>
+<th style="text-align: right;">SP.POP.TOTL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AO</td>
+<td style="text-align: left;">AGO</td>
+<td style="text-align: left;">Angola</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">23960</td>
+<td style="text-align: right;">31273533</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BI</td>
+<td style="text-align: left;">BDI</td>
+<td style="text-align: left;">Burundi</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">690</td>
+<td style="text-align: right;">11493472</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BJ</td>
+<td style="text-align: left;">BEN</td>
+<td style="text-align: left;">Benin</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">7420</td>
+<td style="text-align: right;">11940683</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BF</td>
+<td style="text-align: left;">BFA</td>
+<td style="text-align: left;">Burkina Faso</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">4670</td>
+<td style="text-align: right;">20392723</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BW</td>
+<td style="text-align: left;">BWA</td>
+<td style="text-align: left;">Botswana</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">7310</td>
+<td style="text-align: right;">2451409</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CF</td>
+<td style="text-align: left;">CAF</td>
+<td style="text-align: left;">Central African Republic</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">5094780</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Nous renommons les variables pour avoir un tableau plus simple ou la population est en millions d’habitants, les émissions de CO2 en millions de tonnes. On y ajoute l’intensité des émissions en tonnes par habitant.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>don <span class="ot">&lt;-</span>df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="at">iso3 =</span> iso3c,  <span class="at">POP =</span> SP.POP.TOTL, <span class="at">CO2 =</span> EN.ATM.CO2E.KT) <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">POP =</span> POP<span class="sc">/</span><span class="dv">1000000</span>, <span class="at">CO2 =</span> CO2<span class="sc">/</span><span class="dv">1000</span>, <span class="at">CO2_hab =</span> CO2<span class="sc">/</span>POP)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(don),<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: left;">iso3</th>
+<th style="text-align: right;">POP</th>
+<th style="text-align: right;">CO2</th>
+<th style="text-align: right;">CO2_hab</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AGO</td>
+<td style="text-align: right;">31.27</td>
+<td style="text-align: right;">23.96</td>
+<td style="text-align: right;">0.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BDI</td>
+<td style="text-align: right;">11.49</td>
+<td style="text-align: right;">0.69</td>
+<td style="text-align: right;">0.06</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BEN</td>
+<td style="text-align: right;">11.94</td>
+<td style="text-align: right;">7.42</td>
+<td style="text-align: right;">0.62</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BFA</td>
+<td style="text-align: right;">20.39</td>
+<td style="text-align: right;">4.67</td>
+<td style="text-align: right;">0.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BWA</td>
+<td style="text-align: right;">2.45</td>
+<td style="text-align: right;">7.31</td>
+<td style="text-align: right;">2.98</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CAF</td>
+<td style="text-align: right;">5.09</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">0.05</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="jointure-1" class="level3">
+<h3 class="anchored" data-anchor-id="jointure-1">Jointure</h3>
+<p>Puisque les fichiers comportent un même identifiant et un seul, on peut effectuer la jointure avec la fonction <code>left_join()</code> du package <strong>dplyr</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mapdon <span class="ot">&lt;-</span> <span class="fu">left_join</span>(map,don) <span class="sc">%&gt;%</span> <span class="fu">st_as_sf</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "iso3"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(mapdon))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 21%">
+<col style="width: 16%">
+<col style="width: 10%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">iso3</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">subregion</th>
+<th style="text-align: right;">POP</th>
+<th style="text-align: right;">CO2</th>
+<th style="text-align: right;">CO2_hab</th>
+<th style="text-align: left;">geometry</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AGO</td>
+<td style="text-align: left;">Angola</td>
+<td style="text-align: left;">Middle Africa</td>
+<td style="text-align: right;">31.273533</td>
+<td style="text-align: right;">23.96</td>
+<td style="text-align: right;">0.7661430</td>
+<td style="text-align: left;">MULTIPOLYGON (((1988450 -66…</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BDI</td>
+<td style="text-align: left;">Burundi</td>
+<td style="text-align: left;">Eastern Africa</td>
+<td style="text-align: right;">11.493472</td>
+<td style="text-align: right;">0.69</td>
+<td style="text-align: right;">0.0600341</td>
+<td style="text-align: left;">MULTIPOLYGON (((3530045 -55…</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BEN</td>
+<td style="text-align: left;">Benin</td>
+<td style="text-align: left;">Western Africa</td>
+<td style="text-align: right;">11.940683</td>
+<td style="text-align: right;">7.42</td>
+<td style="text-align: right;">0.6214050</td>
+<td style="text-align: left;">MULTIPOLYGON (((465897.1 69…</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BFA</td>
+<td style="text-align: left;">Burkina Faso</td>
+<td style="text-align: left;">Western Africa</td>
+<td style="text-align: right;">20.392723</td>
+<td style="text-align: right;">4.67</td>
+<td style="text-align: right;">0.2290033</td>
+<td style="text-align: left;">MULTIPOLYGON (((-140403.2 1…</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BWA</td>
+<td style="text-align: left;">Botswana</td>
+<td style="text-align: left;">Southern Africa</td>
+<td style="text-align: right;">2.451409</td>
+<td style="text-align: right;">7.31</td>
+<td style="text-align: right;">2.9819585</td>
+<td style="text-align: left;">MULTIPOLYGON (((2941565 -22…</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CAF</td>
+<td style="text-align: left;">Central African Rep.</td>
+<td style="text-align: left;">Middle Africa</td>
+<td style="text-align: right;">5.094780</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">0.0451442</td>
+<td style="text-align: left;">MULTIPOLYGON (((1865230 839…</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="essai-de-cartographie-1" class="level3">
+<h3 class="anchored" data-anchor-id="essai-de-cartographie-1">Essai de cartographie</h3>
+<p>On réalise ici une belle carte avec le package <strong>mapsf</strong> qui sera expliqué plus loin</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapsf)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>mapdon <span class="sc">%&gt;%</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mf_map</span>(<span class="st">"CO2_hab"</span>, </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">"choro"</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">breaks=</span><span class="st">"jenks"</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">leg_pos=</span><span class="st">"bottomleft"</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">leg_title =</span> <span class="st">"en tonnes/hab."</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mf_map</span>(<span class="st">"CO2"</span>, </span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">inches =</span> <span class="fl">0.2</span>,</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">"prop"</span>,</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col=</span><span class="st">"red"</span>,</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">leg_title =</span> <span class="st">"en millions de tonnes"</span>)</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_title</span>(<span class="st">"Emissions de CO2 des pays d''Afrique en 2018"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="21-CARTO-sf_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="sauvegarde-du-fichier-sf-1" class="level3">
+<h3 class="anchored" data-anchor-id="sauvegarde-du-fichier-sf-1">Sauvegarde du fichier sf</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(mapdon,<span class="st">"carto/africa/africa_sf.RDS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="importation-au-format-geojson" class="level2">
+<h2 class="anchored" data-anchor-id="importation-au-format-geojson">Importation au format GEOJSON</h2>
+<p>La plupart des API permettent de récupérer directement des fichiers combinant les données statistiques et cartographiques au format GEOJSON. Il suffit alors de les convertir au format sf en une seule opération, sans avoir besoin d’effectuer de jointure.</p>
+<section id="récupération-dun-fichier-geojson" class="level3">
+<h3 class="anchored" data-anchor-id="récupération-dun-fichier-geojson">Récupération d’un fichier GEOJSON</h3>
+<p>On commence par repérer une url permettant de récupérer un fichier de type GeoJSON. Puis on récupère le fichier et on l’enregistre à l’aide de la fonction <code>dowload.file()</code> en lui donnat l’extension <em>.geojson</em>. Ce fichier pourra être utilisé dans d’autres langages de programmation comme Python.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>myurl<span class="ot">&lt;-</span> <span class="st">"https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/georef-france-commune/exports/geojson?lang=fr&amp;refine=reg_name%3A%22%C3%8Ele-de-France%22&amp;timezone=Europe%2FBerlin"</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url=</span>myurl,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile=</span><span class="st">"carto/idfcom/idfcom.geojson"</span>, </span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">"curl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="conversion-du-fichier-geojson-au-format-sf" class="level3">
+<h3 class="anchored" data-anchor-id="conversion-du-fichier-geojson-au-format-sf">Conversion du fichier geojson au format sf</h3>
+<p>On convertit le fichier geojson au format sf à l’aide de la fonction <code>geojson_sf()</code>du package <strong>geojsonsf</strong>. On vérifie que le fichier est bien de la bonne classe</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>mapdon<span class="ot">&lt;-</span><span class="fu">geojson_sf</span>(<span class="st">"carto/idfcom/idfcom.geojson"</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(mapdon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "sf"         "data.frame"</code></pre>
+</div>
+</div>
+</section>
+<section id="sélection-des-variables" class="level3">
+<h3 class="anchored" data-anchor-id="sélection-des-variables">Sélection des variables</h3>
+<p>On ne conserve que la colonne code et on ajoute une colonne département</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>mapdon<span class="ot">&lt;-</span>mapdon <span class="sc">%&gt;%</span> <span class="fu">select</span>(com_code) <span class="sc">%&gt;%</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">com_code =</span> <span class="fu">substr</span>(com_code,<span class="dv">3</span>,<span class="dv">7</span>),</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">depcode =</span> <span class="fu">substr</span>(com_code,<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mapdon)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 6 features and 2 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 2.584831 ymin: 48.49468 xmax: 3.48622 ymax: 48.91068
+Geodetic CRS:  WGS 84
+  com_code                       geometry depcode
+1    77072 POLYGON ((3.411219 48.54254...      77
+2    77075 POLYGON ((2.775456 48.91034...      77
+3    77081 POLYGON ((2.738851 48.6351,...      77
+4    77151 POLYGON ((3.156655 48.6999,...      77
+5    77152 POLYGON ((2.641049 48.49468...      77
+6    77192 POLYGON ((2.896519 48.68125...      77</code></pre>
+</div>
+</div>
+</section>
+<section id="essai-de-cartographie-2" class="level3">
+<h3 class="anchored" data-anchor-id="essai-de-cartographie-2">Essai de cartographie</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mapdon[<span class="st">"depcode"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="21-CARTO-sf_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="sauvegarde-au-format-sf" class="level3">
+<h3 class="anchored" data-anchor-id="sauvegarde-au-format-sf">Sauvegarde au format sf</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(mapdon,<span class="st">"carto/idfcom/idfcom.RDS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
