@@ -10,7 +10,7 @@ render:
       - 20-CARTO-INTRO.qmd
       - 21-CARTO-sf.qmd
       - 22-CARTO-mapsf.qmd  
-
+      - XX-PROJ-Carto1.qmd 
   
 website:
   title: "DataMining2023"
@@ -24,7 +24,7 @@ website:
       - 20-CARTO-INTRO.qmd
       - 21-CARTO-sf.qmd      
       - 22-CARTO-mapsf.qmd   
-      
+      - XX-PROJ-Carto1.qmd       
 format:
   html:
     theme: cosmo
