@@ -16,18 +16,15 @@ library(sf)
 library(mapsf)
 ```
 
-
-
 ## A. AGREGATION PAR COMMUNE
 
 La première étape du travail consiste à agréger les données de vente par commune en utilisant le code INSEE qui permettra par la suite de faire la jointure avec un fonds de carte.
-
 
 ### A.1 Nettoyage du fichier dvf
 
 On charge le fichier dvf et on procède aux opérations de nettoyage nécéssaires (Cf. cours de Camille Signoretto).
 
-```{r}
+```{r, eval=FALSE}
 # Chargement
 dvf <- read.csv2("projet/dvf/dvf_etudiants.csv")
 ####  Selection et recodage 
@@ -100,6 +97,7 @@ saveRDS(don,"projet/dvf/dvfclean.RDS")
 L'agrégation des variables qualitatives comme le type maison ou appartement s'effectue par simple comptage à l'aide de la fonction *n()*. On peut calculer les stocks d'un type précis :
 
 ```{r}
+don <- readRDS("projet/dvf/dvfclean.RDS")
 nb_maison <- don %>% filter(type == "Maison") %>%
                         group_by(code) %>% 
                         summarise(Maison = n())
@@ -112,7 +110,6 @@ nb_appart <- don %>% filter(type == "Appart") %>%
 ```
 
 On peut également calculer d'un seul coup les stocks de différents types ce qui est plus efficace. Mais il faut alors pivoter le tableau pour redisposer les modalités en colonne.
-
 
 ```{r}
 # Agrégation
@@ -128,10 +125,9 @@ names(nb_type) <- c("code","Appart_nb","Maison_nb")
 head(nb_type)
 ```
 
-### A.3 Sommes de volumes 
+### A.3 Sommes de volumes
 
 A la différence des effectifs, les volumes impliquent d'effectuer la somme de quantités. On va par exemple calculer le montant total des surfaces de logement ou le montant total des prix de ventes en séparant maisons et appartements.
-
 
 ```{r}
 # Agrégation
@@ -146,7 +142,6 @@ surf_tot <-  dcast(surf_tot,
 names(surf_tot) <- c("code","Appart_surf_tot","Maison_surf_tot")
 head(surf_tot)
 ```
-
 
 ```{r}
 # Agrégation
@@ -234,11 +229,9 @@ map_com<-readRDS("projet/mapcomdvf.RDS")
 map_dep<-readRDS("projet/geom/map_dep.RDS")
 ```
 
+### Carte de stock minimale
 
-
-### Carte de stock minimale 
-
-Les instructions minimales sont les suivantes : 
+Les instructions minimales sont les suivantes :
 
 ```{r }
 # Trace les contours des communes
@@ -255,10 +248,9 @@ mf_map(x =map_com,
 
 Mais le résultat est peu satisfaisant car les cercles sont trop grands. Il faut en pratique toujours effectuer un réglage de ceux-ci avec l'instruction `inches=`
 
+### Carte de stock habillée
 
-### Carte de stock habillée 
-
-On obtient une carte évidemment plus satisfaisante en effectuant une série de réglages : 
+On obtient une carte évidemment plus satisfaisante en effectuant une série de réglages :
 
 ```{r }
 
@@ -350,15 +342,11 @@ mf_layout(title = "Appartements",
 
 ```
 
-- **Commentaire** : La carte finale permet de bien mettre en évidence le fait que les ventes d'appartements sont beaucoup plus nombreuses que celle des maisons. Mais elle montre aussi l'existence d'un gradient centre-périphérie avec l'accroissement progressif de la part des maisons par rapport aux appartements. 
-
-
-
+-   **Commentaire** : La carte finale permet de bien mettre en évidence le fait que les ventes d'appartements sont beaucoup plus nombreuses que celle des maisons. Mais elle montre aussi l'existence d'un gradient centre-périphérie avec l'accroissement progressif de la part des maisons par rapport aux appartements.
 
 ### Carte choroplèthe minimale
 
 On prend comme exemple la médiane du prix de vente au m2
-
 
 ```{r }
 # Carte choroplèthe
@@ -368,13 +356,9 @@ mf_map(
   type = "choro")
 ```
 
-
-
 ### Carte choroplèthe habillée
 
-On peut arriver à une carte beaucoup plus satisfaisante en contrôlant l'ensemble des paramètres de couleur et de découpage des classes. Puis en superposant les contours des départements au dessus de la carte des communes pour faciliter le repérage. 
-
-
+On peut arriver à une carte beaucoup plus satisfaisante en contrôlant l'ensemble des paramètres de couleur et de découpage des classes. Puis en superposant les contours des départements au dessus de la carte des communes pour faciliter le repérage.
 
 ```{r }
 # Choisir les classes et la palette
@@ -402,7 +386,6 @@ mf_layout(title = "Prix de vente médian des appartements 2017-2021",
           frame = TRUE,
           credits = "Sources : IGN et DVF")
 ```
-
 
 ### Comparaison de cartes choroplèthes
 
@@ -460,4 +443,4 @@ mf_layout(title = "Prix des appartements",
 
 ```
 
-- **Commentaire** : Les maisons sont en général plus chères que les appartements mais la géographie des deux distributions est très comparable. 
+-   **Commentaire** : Les maisons sont en général plus chères que les appartements mais la géographie des deux distributions est très comparable.
