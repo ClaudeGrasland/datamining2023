@@ -70,6 +70,7 @@ head(mapdon)
 
 ### Essai de cartographie
 
+On utilise ici la fonction d'affichage la plus basique ...
 
 ```{r}
 plot(mapdon["PNB"])
@@ -85,55 +86,42 @@ saveRDS(mapdon,"carto/europe88/europe88_sf.RDS")
 
 ## Importation à l'aide de packages
 
-Nous allons essayer de constituer une carte des émissions de CO2 par habitant des pays d'Afrique en 2018 basée sur la combinaison des données `wbstats` et du fonds de carte `naturalearth`.
+Nous allons essayer de constituer une carte des émissions de CO2 par habitant dans le Monde 2018 basée sur la combinaison des données `wbstats` et du fonds de carte gadm du package  `geodata`.
 
 ### Importation du fonds de carte
 
-On charge le fonds de carte `countries110`du package **rnaturalearth** et on en extrait les pays africains ainsi que deux ou trois variables utiles. On utilise la commande `st_as_sf()`pour passer le fonds de carte du format sp (ancien) au format sf (actuel).
+On charge le fonds de carte des pays du Monde du package geodata 
 
-```{r}
-library(rnaturalearth)
-map_world<-(countries110) %>% st_as_sf()
-map<- map_world %>% filter(continent == "Africa") %>%
-          select(iso3=iso_a3,name, subregion)
-kable(head(map))
-class(map)
-
-```
-
-### Projection
-
-Notre carte n'est pas projetée actuellement (les coordonnées sont en latitude et longitude). On modifie son "Coordinate Reference System" pour obtenir des coordonnées planes permettant de calculer des distances.  
-
-```{r}
-map<-st_transform(map,crs = 32631)
-plot(map$geometry)
+```{r, eval=FALSE}
+library(geodata)
+map<-world(resolution=5, path=tempdir())
+worldmap<-st_as_sf(map)
+saveRDS(worldmap, "carto/world/worldmap.RDS")
 ```
 
 
 
 ### Importation des données statistiques
 
-On importe les données statistiques correspondant aux pays qui ont été retenus dans le fonds de carte.
+On importe les données statistiques correspondant aux pays qui ont été retenus dans le fonds de carte. Pour cela on utilise l'API de la banque mondiale
 
-```{r}
-mycountries<-map$iso3
+```{r, eval=FALSE}
+library(wbstats)
 df   <- wb_data(indicator  = c("SP.POP.TOTL", "EN.ATM.CO2E.KT"),
                 return_wide = TRUE,
                 start_date = 2018,
-                end_date = 2018,
-                country = mycountries)
-kable(head(df))
+                end_date = 2018)
 
 ```
 
-Nous renommons les variables pour avoir un tableau plus simple ou la population est en millions d'habitants, les émissions de CO2 en millions de tonnes. On y ajoute l'intensité des émissions en tonnes par habitant.
+Nous renommons les variables pour avoir un tableau plus simple ou la population est en millions d'habitants, les émissions de CO2 en millions de tonnes. On y ajoute l'intensité des émissions en tonnes par habitant. Puis on sauvegarder le tout.
 
-```{r}
+```{r, eval=FALSE}
 
 don <-df %>% select(iso3 = iso3c,  POP = SP.POP.TOTL, CO2 = EN.ATM.CO2E.KT) %>%
             mutate(POP = POP/1000000, CO2 = CO2/1000, CO2_hab = CO2/POP)
 kable(head(don),digits = 2)
+saveRDS(don, "carto/world/worlddon.RDS")
 
 ```
 
@@ -141,10 +129,16 @@ kable(head(don),digits = 2)
 
 ### Jointure
 
-Puisque les fichiers comportent un même identifiant et un seul, on peut effectuer la jointure avec la fonction `left_join()` du package **dplyr**.
+On charge nos deux fichiers de cartes et de données. Comme ces fichiers comportent un même identifiant et un seul (*iso3*), on peut effectuer la jointure avec la fonction `left_join()` du package **dplyr**.
 
 ```{r }
-mapdon <- left_join(map,don) %>% st_as_sf()
+map<-readRDS("carto/world/worldmap.RDS")
+don<-readRDS("carto/world/worlddon.RDS")
+mapdon <- merge(map, don, 
+                by.x="GID_0",
+                by.y="iso3",
+                all.x=T,
+                all.y = F)
 kable(head(mapdon))
 ```
 
@@ -156,26 +150,27 @@ On réalise ici une belle carte avec le package **mapsf** qui sera expliqué plu
 ```{r}
 library(mapsf)
 mf_theme("agolalight")
-mapdon %>% 
-  mf_map("CO2_hab", 
-         "choro",
+  mf_map(x= mapdon,
+         var = "CO2_hab", 
+         type = "choro",
          breaks="jenks",
          leg_pos="bottomleft",
-         leg_title = "en tonnes/hab.")%>%
-  mf_map("CO2", 
+         leg_title = "en tonnes/hab.")
+  mf_map(x= mapdon,
+         var = "CO2",
+         type = "prop",
          inches = 0.2,
-         "prop",
          col="red",
          leg_pos = "topleft",
          leg_title = "en millions de tonnes")
-mf_title("Emissions de CO2 des pays d''Afrique en 2018")
+mf_title("Emissions de CO2 des pays du Monde en 2018")
 
 ```
 
 ### Sauvegarde du fichier sf
 
 ```{r}
-saveRDS(mapdon,"carto/africa/africa_sf.RDS")
+saveRDS(mapdon,"carto/world/worldmapCO2.RDS")
 ```
 
 

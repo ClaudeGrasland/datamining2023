@@ -6,15 +6,16 @@ embed-resources: true
 ---
 
 
-```{r, comment = F, warning = F, message = F}
+```{r, comment = F, warning = F, message = F, echo=F}
 library(knitr,warn.conflicts = T,quietly = T)
 library(dplyr, warn.conflicts = T,quietly = T)
 
 ```
 
 
-```{r apischema, echo=FALSE}
-knitr::include_graphics("img/API.jpeg")
+```{r apischema, echo=FALSE,fig.width=3}
+knitr::include_graphics("img/mapsf.jpg")
+knitr::include_graphics("img/leaflet.jpg")
 ```
 
 La représentation cartographiques de données spatiales dans R s'est beucoup développée depuis quelques années et on dispose désormais de packages de très bonne qualité pour réaliser des cartes statiques destyinées à la publication ou des cartes dynamiques destinées aux interfaces web. 
