@@ -26,23 +26,23 @@ On charge le fichier dvf et on procède aux opérations de nettoyage nécéssair
 
 ```{r, eval=FALSE}
 # Chargement
-dvf <- read.csv2("projet/dvf/dvf_etudiants.csv")
+dvf <- read.csv2("base/dvf_etudiants_V2.csv")
 ####  Selection et recodage 
 
 # identifiant unique
-id<-dvf$ident
+id<-dvf$Identifiant.de.mutation..Etalab.
 
 # année => factor
-ann <- as.factor(dvf$annee_vente)
+ann <-  substr(dvf$Date.de.la.mutation,1,4)
 table(ann)
 
 # type => factor
-type <- as.factor(dvf$type_local)
-levels(type)<-c("Appart","Appart","Appart","Maison")
+type <- as.factor(dvf$Type.de.local)
+#levels(type)<-c("Appart","Appart","Appart","Maison")
 table(type)
 
 # code de la commune 
-code <-as.character(dvf$code_INSEE_commune)
+code <-as.character(dvf$Code.INSEE.de.la.commune)
 head(table(code))
 
 # nom de la commune
@@ -87,7 +87,7 @@ don <- don %>% filter(don$dep %in% c("75","92","93","94"))
 summary(don)
 
 ### Sauvegarde
-saveRDS(don,"projet/dvf/dvfclean.RDS")
+saveRDS(don,"projet/dvf/dvfclean_V2.RDS")
 
 
 ```
@@ -97,13 +97,13 @@ saveRDS(don,"projet/dvf/dvfclean.RDS")
 L'agrégation des variables qualitatives comme le type maison ou appartement s'effectue par simple comptage à l'aide de la fonction *n()*. On peut calculer les stocks d'un type précis :
 
 ```{r}
-don <- readRDS("projet/dvf/dvfclean.RDS")
+don <- readRDS("projet/dvf/dvfclean_V2.RDS")
 nb_maison <- don %>% filter(type == "Maison") %>%
                         group_by(code) %>% 
                         summarise(Maison = n())
 head(nb_maison)
  
-nb_appart <- don %>% filter(type == "Appart") %>%
+nb_appart <- don %>% filter(type == "Appartement") %>%
                         group_by(code) %>% 
                         summarise(Appart = n())  
  head(nb_appart)
@@ -370,7 +370,7 @@ mf_map( map_com,
         type = "choro",
         breaks = mybreaks,
         pal = mypal,
-        border="white",
+        border="gray70",
         col_na = "gray80",
         leg_title = "en euros / m2",
         leg_val_rnd = 0)
@@ -389,7 +389,7 @@ mf_layout(title = "Prix de vente médian des appartements 2017-2021",
 
 ### Comparaison de cartes choroplèthes
 
-On peut mettre en regard les deux cartes de prix moyen au m2 des appartements et des maisons en utilisant les mêmes limites de classe. On retirera toutefois les communes ou arrondissements dans lesquels moins de 20 maisons ont été vendues afin d'éviter des fluctuations aléatoires.
+On peut mettre en regard les deux cartes de prix moyen au m2 des appartements et des maisons en utilisant les mêmes limites de classe. On retirera toutefois les communes ou arrondissements dans lesquels moins de 10 maisons ont été vendues afin d'éviter des fluctuations aléatoires.
 
 ```{r }
 par(mfrow = c(1,2))
@@ -399,13 +399,13 @@ mypal <- mf_get_pal(n = c(5, 5), pal = c("Greens", "Reds"))
 
 # Carte des maisons
 map_com2 <- map_com
-map_com2$Maison_prixm2_mediane[map_com2$Maison_nb<20]<-NA
+map_com2$Maison_prixm2_mediane[map_com2$Maison_nb<10]<-NA
 mf_map( map_com2,
         var = "Maison_prixm2_mediane",
         type = "choro",
         breaks = mybreaks,
         pal = mypal,
-        border="white",
+        border="gray50",
         col_na = "gray80",
         leg_title = "en euros / m2",
         leg_val_rnd = 0)
@@ -426,7 +426,7 @@ mf_map( map_com,
         type = "choro",
         breaks = mybreaks,
         pal = mypal,
-        border="white",
+        border="gray50",
         col_na = "gray80",
         leg_title = "en euros / m2",
         leg_val_rnd = 0)

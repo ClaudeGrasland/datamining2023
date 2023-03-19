@@ -264,23 +264,23 @@ Attaching package: 'dplyr'</code></pre>
 <p>On charge le fichier dvf et on procède aux opérations de nettoyage nécéssaires (Cf. cours de Camille Signoretto).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Chargement</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dvf <span class="ot">&lt;-</span> <span class="fu">read.csv2</span>(<span class="st">"projet/dvf/dvf_etudiants.csv"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dvf <span class="ot">&lt;-</span> <span class="fu">read.csv2</span>(<span class="st">"base/dvf_etudiants_V2.csv"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="do">####  Selection et recodage </span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># identifiant unique</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>id<span class="ot">&lt;-</span>dvf<span class="sc">$</span>ident</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>id<span class="ot">&lt;-</span>dvf<span class="sc">$</span>Identifiant.de.mutation..Etalab.</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># année =&gt; factor</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>ann <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dvf<span class="sc">$</span>annee_vente)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>ann <span class="ot">&lt;-</span>  <span class="fu">substr</span>(dvf<span class="sc">$</span>Date.de.la.mutation,<span class="dv">1</span>,<span class="dv">4</span>)</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(ann)</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># type =&gt; factor</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dvf<span class="sc">$</span>type_local)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(type)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Appart"</span>,<span class="st">"Appart"</span>,<span class="st">"Appart"</span>,<span class="st">"Maison"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dvf<span class="sc">$</span>Type.de.local)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#levels(type)&lt;-c("Appart","Appart","Appart","Maison")</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(type)</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># code de la commune </span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>code <span class="ot">&lt;-</span><span class="fu">as.character</span>(dvf<span class="sc">$</span>code_INSEE_commune)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>code <span class="ot">&lt;-</span><span class="fu">as.character</span>(dvf<span class="sc">$</span>Code.INSEE.de.la.commune)</span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">table</span>(code))</span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co"># nom de la commune</span></span>
@@ -325,14 +325,14 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(don)</span>
 <span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="do">### Sauvegarde</span></span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(don,<span class="st">"projet/dvf/dvfclean.RDS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(don,<span class="st">"projet/dvf/dvfclean_V2.RDS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="a.2-calcul-deffectifs-par-commune" class="level3">
 <h3 class="anchored" data-anchor-id="a.2-calcul-deffectifs-par-commune">A.2 Calcul d’effectifs par commune</h3>
 <p>L’agrégation des variables qualitatives comme le type maison ou appartement s’effectue par simple comptage à l’aide de la fonction <em>n()</em>. On peut calculer les stocks d’un type précis :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>don <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"projet/dvf/dvfclean.RDS"</span>)</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>don <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"projet/dvf/dvfclean_V2.RDS"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nb_maison <span class="ot">&lt;-</span> don <span class="sc">%&gt;%</span> <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"Maison"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">group_by</span>(code) <span class="sc">%&gt;%</span> </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">summarise</span>(<span class="at">Maison =</span> <span class="fu">n</span>())</span>
@@ -341,14 +341,14 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 6 × 2
   code  Maison
   &lt;chr&gt;  &lt;int&gt;
-1 75103      1
-2 75105      4
-3 75107      3
-4 75108      1
-5 75109      1
-6 75110      1</code></pre>
+1 75105      9
+2 75106      3
+3 75107      4
+4 75108      2
+5 75109      2
+6 75112      6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nb_appart <span class="ot">&lt;-</span> don <span class="sc">%&gt;%</span> <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"Appart"</span>) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nb_appart <span class="ot">&lt;-</span> don <span class="sc">%&gt;%</span> <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"Appartement"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">group_by</span>(code) <span class="sc">%&gt;%</span> </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">summarise</span>(<span class="at">Appart =</span> <span class="fu">n</span>())  </span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">head</span>(nb_appart)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -356,12 +356,12 @@ Attaching package: 'dplyr'</code></pre>
 <pre><code># A tibble: 6 × 2
   code  Appart
   &lt;chr&gt;  &lt;int&gt;
-1 75101   1287
-2 75102   2326
-3 75103   3011
-4 75104   2156
-5 75105   3603
-6 75106   2813</code></pre>
+1 75101   1770
+2 75102   2645
+3 75103   3241
+4 75104   2296
+5 75105   3666
+6 75106   3447</code></pre>
 </div>
 </div>
 <p>On peut également calculer d’un seul coup les stocks de différents types ce qui est plus efficace. Mais il faut alors pivoter le tableau pour redisposer les modalités en colonne.</p>
@@ -383,12 +383,12 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(nb_type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   code Appart_nb Maison_nb
-1 75101      1287         0
-2 75102      2326         0
-3 75103      3011         1
-4 75104      2156         0
-5 75105      3603         4
-6 75106      2813         0</code></pre>
+1 75101      1770         0
+2 75102      2645         0
+3 75103      3241         0
+4 75104      2296         0
+5 75105      3666         9
+6 75106      3447         3</code></pre>
 </div>
 </div>
 </section>
@@ -413,12 +413,12 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(surf_tot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   code Appart_surf_tot Maison_surf_tot
-1 75101           64577               0
-2 75102          109724               0
-3 75103          150876             139
-4 75104          111068               0
-5 75105          179573             562
-6 75106          166426               0</code></pre>
+1 75101           74447               0
+2 75102          100602               0
+3 75103          132466               0
+4 75104           95603               0
+5 75105          141190            1095
+6 75106          165464             269</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -439,12 +439,12 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(prix_tot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   code Appart_prix_tot Maison_prix_tot
-1 75101       757718366               0
-2 75102      1207774003               0
-3 75103      1720752793         2051090
-4 75104      1326128038               0
-5 75105      2095445039         5472085
-6 75106      2145180387               0</code></pre>
+1 75101      1044977268               0
+2 75102      1122946993               0
+3 75103      1602176390               0
+4 75104      1366842393               0
+5 75105      1804508247        12681412
+6 75106      2537909324         6110000</code></pre>
 </div>
 </div>
 <p>Si on effectue la jointure de ces fichier avec le fichier précédent, on pourra calculer la moyenne <strong>pondérée</strong> des surfaces des maisons ou des appartements ainsi que la moyenne <strong>pondérée</strong> des prix de vente au mètre carré.</p>
@@ -553,10 +553,7 @@ Joining with `by = join_by(code)`</code></pre>
 <span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">var =</span> <span class="st">"Maison_nb"</span>,</span>
 <span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>9 'NA' values are not plotted on the map.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>4 '0' values are not plotted on the map.</code></pre>
+<pre><code>6 '0' values are not plotted on the map.</code></pre>
 </div>
 <div class="cell-output-display">
 <p><img src="XX-PROJ-Carto1_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
@@ -568,34 +565,31 @@ Joining with `by = join_by(code)`</code></pre>
 <h3 class="anchored" data-anchor-id="carte-de-stock-habillée">Carte de stock habillée</h3>
 <p>On obtient une carte évidemment plus satisfaisante en effectuant une série de réglages :</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, <span class="at">type =</span> <span class="st">"base"</span>,  </span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightyellow"</span>,<span class="at">border=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep, </span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>, </span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, </span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">var =</span> <span class="st">"Maison_nb"</span>,</span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"prop"</span>,</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">inches =</span> <span class="fl">0.1</span>, </span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"red"</span>,</span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,  </span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_title =</span> <span class="st">"Nombre de ventes"</span>,</span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, <span class="at">type =</span> <span class="st">"base"</span>,  </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightyellow"</span>,<span class="at">border=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep, </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>, </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, </span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">var =</span> <span class="st">"Maison_nb"</span>,</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"prop"</span>,</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">inches =</span> <span class="fl">0.1</span>, </span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"red"</span>,</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,  </span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_title =</span> <span class="st">"Nombre de ventes"</span>,</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>9 'NA' values are not plotted on the map.</code></pre>
+<pre><code>6 '0' values are not plotted on the map.</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>4 '0' values are not plotted on the map.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Ventes de maison 2017-2021"</span>, </span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow =</span> F,</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : DVF &amp; IGN"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Ventes de maison 2017-2021"</span>, </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow =</span> F,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : DVF &amp; IGN"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="XX-PROJ-Carto1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -605,67 +599,62 @@ Joining with `by = join_by(code)`</code></pre>
 <h3 class="anchored" data-anchor-id="comparaison-de-cartes-de-stock">Comparaison de cartes de stock</h3>
 <p>On peut mettre en regard les deux cartes de stock des ventes de maison et d’appartement. Dans ce cas on utilise le paramètre <code>val_max =</code> pour donner une taille proportionnelle aux stocks de chacune des deux cartes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coupe la page en 2 colonnes</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des maisons</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, <span class="at">type =</span> <span class="st">"base"</span>,  </span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightyellow"</span>,<span class="at">border=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep, </span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>, </span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, </span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">var =</span> <span class="st">"Maison_nb"</span>,</span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"prop"</span>,</span>
-<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">inches =</span> <span class="fl">0.1</span>, </span>
-<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">val_max =</span> <span class="dv">15000</span>,</span>
-<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"red"</span>,</span>
-<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,  </span>
-<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_title =</span> <span class="st">"Nombre de ventes 2017-2021"</span>,</span>
-<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coupe la page en 2 colonnes</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des maisons</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, <span class="at">type =</span> <span class="st">"base"</span>,  </span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightyellow"</span>,<span class="at">border=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep, </span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>, </span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, </span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">var =</span> <span class="st">"Maison_nb"</span>,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"prop"</span>,</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">inches =</span> <span class="fl">0.1</span>, </span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">val_max =</span> <span class="dv">15000</span>,</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"red"</span>,</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,  </span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_title =</span> <span class="st">"Nombre de ventes 2017-2021"</span>,</span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>9 'NA' values are not plotted on the map.</code></pre>
+<pre><code>6 '0' values are not plotted on the map.</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>4 '0' values are not plotted on the map.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Maisons"</span>, </span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : DVF &amp; IGN"</span>)</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des appartements</span></span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, <span class="at">type =</span> <span class="st">"base"</span>,  </span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightyellow"</span>,<span class="at">border=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep, </span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>, </span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, </span>
-<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">var =</span> <span class="st">"Appart_nb"</span>,</span>
-<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"prop"</span>,</span>
-<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">val_max =</span> <span class="dv">15000</span>,</span>
-<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">inches =</span> <span class="fl">0.1</span>, </span>
-<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"blue"</span>,</span>
-<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,  </span>
-<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_title =</span> <span class="st">"Nombre de ventes 2017-2021"</span>,</span>
-<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>9 'NA' values are not plotted on the map.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Appartements"</span>, </span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : DVF &amp; IGN"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Maisons"</span>, </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : DVF &amp; IGN"</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des appartements</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_theme</span>(<span class="st">"agolalight"</span>)</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, <span class="at">type =</span> <span class="st">"base"</span>,  </span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightyellow"</span>,<span class="at">border=</span><span class="st">"gray80"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep, </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>, </span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_com, </span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">var =</span> <span class="st">"Appart_nb"</span>,</span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"prop"</span>,</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">val_max =</span> <span class="dv">15000</span>,</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">inches =</span> <span class="fl">0.1</span>, </span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"blue"</span>,</span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_pos =</span> <span class="st">"topleft"</span>,  </span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">leg_title =</span> <span class="st">"Nombre de ventes 2017-2021"</span>,</span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">add=</span><span class="cn">TRUE</span>)</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Appartements"</span>, </span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
+<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : DVF &amp; IGN"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="XX-PROJ-Carto1_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -678,11 +667,11 @@ Joining with `by = join_by(code)`</code></pre>
 <h3 class="anchored" data-anchor-id="carte-choroplèthe-minimale">Carte choroplèthe minimale</h3>
 <p>On prend comme exemple la médiane du prix de vente au m2</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte choroplèthe</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> map_com, </span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">var =</span> <span class="st">"Appart_prixm2_mediane"</span>,</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"choro"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte choroplèthe</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> map_com, </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">var =</span> <span class="st">"Appart_prixm2_mediane"</span>,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"choro"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="XX-PROJ-Carto1_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -692,30 +681,30 @@ Joining with `by = join_by(code)`</code></pre>
 <h3 class="anchored" data-anchor-id="carte-choroplèthe-habillée">Carte choroplèthe habillée</h3>
 <p>On peut arriver à une carte beaucoup plus satisfaisante en contrôlant l’ensemble des paramètres de couleur et de découpage des classes. Puis en superposant les contours des départements au dessus de la carte des communes pour faciliter le repérage.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Choisir les classes et la palette</span></span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>mybreaks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">2000</span>,<span class="dv">3000</span>,<span class="dv">4000</span>,<span class="dv">5000</span>,<span class="dv">6000</span>,<span class="dv">7000</span>,<span class="dv">8000</span>,<span class="dv">9000</span>,<span class="dv">10000</span>, <span class="dv">14000</span>)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>mypal <span class="ot">&lt;-</span> <span class="fu">mf_get_pal</span>(<span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">pal =</span> <span class="fu">c</span>(<span class="st">"Greens"</span>, <span class="st">"Reds"</span>))</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracer la carte choroplèthe</span></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>( map_com,</span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">var =</span> <span class="st">"Appart_prixm2_mediane"</span>,</span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"choro"</span>,</span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">breaks =</span> mybreaks,</span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> mypal,</span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">border=</span><span class="st">"white"</span>,</span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_na =</span> <span class="st">"gray80"</span>,</span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_title =</span> <span class="st">"en euros / m2"</span>,</span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_val_rnd =</span> <span class="dv">0</span>)</span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajouter les contours des départements</span></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep,</span>
-<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>,</span>
-<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
-<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
-<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
-<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajouter un cadre, un titre et des sources</span></span>
-<span id="cb53-22"><a href="#cb53-22" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Prix de vente médian des appartements 2017-2021"</span>, </span>
-<span id="cb53-23"><a href="#cb53-23" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb53-24"><a href="#cb53-24" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : IGN et DVF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Choisir les classes et la palette</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>mybreaks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">2000</span>,<span class="dv">3000</span>,<span class="dv">4000</span>,<span class="dv">5000</span>,<span class="dv">6000</span>,<span class="dv">7000</span>,<span class="dv">8000</span>,<span class="dv">9000</span>,<span class="dv">10000</span>, <span class="dv">14000</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>mypal <span class="ot">&lt;-</span> <span class="fu">mf_get_pal</span>(<span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">pal =</span> <span class="fu">c</span>(<span class="st">"Greens"</span>, <span class="st">"Reds"</span>))</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Tracer la carte choroplèthe</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>( map_com,</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">var =</span> <span class="st">"Appart_prixm2_mediane"</span>,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"choro"</span>,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">breaks =</span> mybreaks,</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> mypal,</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">border=</span><span class="st">"gray70"</span>,</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_na =</span> <span class="st">"gray80"</span>,</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_title =</span> <span class="st">"en euros / m2"</span>,</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_val_rnd =</span> <span class="dv">0</span>)</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajouter les contours des départements</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep,</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>,</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajouter un cadre, un titre et des sources</span></span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Prix de vente médian des appartements 2017-2021"</span>, </span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : IGN et DVF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="XX-PROJ-Carto1_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -723,56 +712,56 @@ Joining with `by = join_by(code)`</code></pre>
 </section>
 <section id="comparaison-de-cartes-choroplèthes" class="level3">
 <h3 class="anchored" data-anchor-id="comparaison-de-cartes-choroplèthes">Comparaison de cartes choroplèthes</h3>
-<p>On peut mettre en regard les deux cartes de prix moyen au m2 des appartements et des maisons en utilisant les mêmes limites de classe. On retirera toutefois les communes ou arrondissements dans lesquels moins de 20 maisons ont été vendues afin d’éviter des fluctuations aléatoires.</p>
+<p>On peut mettre en regard les deux cartes de prix moyen au m2 des appartements et des maisons en utilisant les mêmes limites de classe. On retirera toutefois les communes ou arrondissements dans lesquels moins de 10 maisons ont été vendues afin d’éviter des fluctuations aléatoires.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Choisir les classes et la palette</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>mybreaks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">2000</span>,<span class="dv">3000</span>,<span class="dv">4000</span>,<span class="dv">5000</span>,<span class="dv">6000</span>,<span class="dv">7000</span>,<span class="dv">8000</span>,<span class="dv">9000</span>,<span class="dv">10000</span>, <span class="dv">14000</span>)</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>mypal <span class="ot">&lt;-</span> <span class="fu">mf_get_pal</span>(<span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">pal =</span> <span class="fu">c</span>(<span class="st">"Greens"</span>, <span class="st">"Reds"</span>))</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des maisons</span></span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>map_com2 <span class="ot">&lt;-</span> map_com</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>map_com2<span class="sc">$</span>Maison_prixm2_mediane[map_com2<span class="sc">$</span>Maison_nb<span class="sc">&lt;</span><span class="dv">20</span>]<span class="ot">&lt;-</span><span class="cn">NA</span></span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>( map_com2,</span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">var =</span> <span class="st">"Maison_prixm2_mediane"</span>,</span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"choro"</span>,</span>
-<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">breaks =</span> mybreaks,</span>
-<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> mypal,</span>
-<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">border=</span><span class="st">"white"</span>,</span>
-<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_na =</span> <span class="st">"gray80"</span>,</span>
-<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_title =</span> <span class="st">"en euros / m2"</span>,</span>
-<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_val_rnd =</span> <span class="dv">0</span>)</span>
-<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep,</span>
-<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>,</span>
-<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
-<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
-<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
-<span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Prix des maisons"</span>, </span>
-<span id="cb54-25"><a href="#cb54-25" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb54-26"><a href="#cb54-26" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
-<span id="cb54-27"><a href="#cb54-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : IGN et DVF"</span>)</span>
-<span id="cb54-28"><a href="#cb54-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-29"><a href="#cb54-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des appartements</span></span>
-<span id="cb54-30"><a href="#cb54-30" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>( map_com,</span>
-<span id="cb54-31"><a href="#cb54-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">var =</span> <span class="st">"Appart_prixm2_mediane"</span>,</span>
-<span id="cb54-32"><a href="#cb54-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"choro"</span>,</span>
-<span id="cb54-33"><a href="#cb54-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">breaks =</span> mybreaks,</span>
-<span id="cb54-34"><a href="#cb54-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> mypal,</span>
-<span id="cb54-35"><a href="#cb54-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">border=</span><span class="st">"white"</span>,</span>
-<span id="cb54-36"><a href="#cb54-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_na =</span> <span class="st">"gray80"</span>,</span>
-<span id="cb54-37"><a href="#cb54-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_title =</span> <span class="st">"en euros / m2"</span>,</span>
-<span id="cb54-38"><a href="#cb54-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_val_rnd =</span> <span class="dv">0</span>)</span>
-<span id="cb54-39"><a href="#cb54-39" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep,</span>
-<span id="cb54-40"><a href="#cb54-40" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>,</span>
-<span id="cb54-41"><a href="#cb54-41" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
-<span id="cb54-42"><a href="#cb54-42" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
-<span id="cb54-43"><a href="#cb54-43" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
-<span id="cb54-44"><a href="#cb54-44" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb54-45"><a href="#cb54-45" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Prix des appartements"</span>, </span>
-<span id="cb54-46"><a href="#cb54-46" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
-<span id="cb54-47"><a href="#cb54-47" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb54-48"><a href="#cb54-48" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : IGN et DVF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Choisir les classes et la palette</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>mybreaks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">2000</span>,<span class="dv">3000</span>,<span class="dv">4000</span>,<span class="dv">5000</span>,<span class="dv">6000</span>,<span class="dv">7000</span>,<span class="dv">8000</span>,<span class="dv">9000</span>,<span class="dv">10000</span>, <span class="dv">14000</span>)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>mypal <span class="ot">&lt;-</span> <span class="fu">mf_get_pal</span>(<span class="at">n =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="at">pal =</span> <span class="fu">c</span>(<span class="st">"Greens"</span>, <span class="st">"Reds"</span>))</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des maisons</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>map_com2 <span class="ot">&lt;-</span> map_com</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>map_com2<span class="sc">$</span>Maison_prixm2_mediane[map_com2<span class="sc">$</span>Maison_nb<span class="sc">&lt;</span><span class="dv">10</span>]<span class="ot">&lt;-</span><span class="cn">NA</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>( map_com2,</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">var =</span> <span class="st">"Maison_prixm2_mediane"</span>,</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"choro"</span>,</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">breaks =</span> mybreaks,</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> mypal,</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">border=</span><span class="st">"gray50"</span>,</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_na =</span> <span class="st">"gray80"</span>,</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_title =</span> <span class="st">"en euros / m2"</span>,</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_val_rnd =</span> <span class="dv">0</span>)</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep,</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>,</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Prix des maisons"</span>, </span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
+<span id="cb49-27"><a href="#cb49-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : IGN et DVF"</span>)</span>
+<span id="cb49-28"><a href="#cb49-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-29"><a href="#cb49-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Carte des appartements</span></span>
+<span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>( map_com,</span>
+<span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">var =</span> <span class="st">"Appart_prixm2_mediane"</span>,</span>
+<span id="cb49-32"><a href="#cb49-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">"choro"</span>,</span>
+<span id="cb49-33"><a href="#cb49-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">breaks =</span> mybreaks,</span>
+<span id="cb49-34"><a href="#cb49-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">pal =</span> mypal,</span>
+<span id="cb49-35"><a href="#cb49-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">border=</span><span class="st">"gray50"</span>,</span>
+<span id="cb49-36"><a href="#cb49-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_na =</span> <span class="st">"gray80"</span>,</span>
+<span id="cb49-37"><a href="#cb49-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_title =</span> <span class="st">"en euros / m2"</span>,</span>
+<span id="cb49-38"><a href="#cb49-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">leg_val_rnd =</span> <span class="dv">0</span>)</span>
+<span id="cb49-39"><a href="#cb49-39" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_map</span>(map_dep,</span>
+<span id="cb49-40"><a href="#cb49-40" aria-hidden="true" tabindex="-1"></a>       <span class="at">type =</span> <span class="st">"base"</span>,</span>
+<span id="cb49-41"><a href="#cb49-41" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="cn">NA</span>,</span>
+<span id="cb49-42"><a href="#cb49-42" aria-hidden="true" tabindex="-1"></a>       <span class="at">border=</span><span class="st">"black"</span>,</span>
+<span id="cb49-43"><a href="#cb49-43" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb49-44"><a href="#cb49-44" aria-hidden="true" tabindex="-1"></a>       <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-45"><a href="#cb49-45" aria-hidden="true" tabindex="-1"></a><span class="fu">mf_layout</span>(<span class="at">title =</span> <span class="st">"Prix des appartements"</span>, </span>
+<span id="cb49-46"><a href="#cb49-46" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrow=</span>F,</span>
+<span id="cb49-47"><a href="#cb49-47" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb49-48"><a href="#cb49-48" aria-hidden="true" tabindex="-1"></a>          <span class="at">credits =</span> <span class="st">"Sources : IGN et DVF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="XX-PROJ-Carto1_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
