@@ -4019,6 +4019,9 @@ vertical-align: -.125em;
   <li class="nav-item">
     <a class="nav-link" href="./XX-PROJ-Carto1.html">PROJET-Carto1</a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./23-Carto-leaflet.html">Cartograpie dynamique avec leaflet</a>
+  </li>  
 </ul>
               <div id="quarto-search" class title="Search"></div>
           </div> <!-- /navcollapse -->
@@ -4181,7 +4184,7 @@ Attaching package: &#39;dplyr&#39;</code></pre>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ovni</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Response [http://api.open-notify.org/astros.json]
-  Date: 2023-03-19 17:23
+  Date: 2023-05-18 18:27
   Status: 200
   Content-Type: application/json
   Size: 500 B</code></pre>
@@ -4202,7 +4205,7 @@ Attaching package: &#39;dplyr&#39;</code></pre>
  $ status_code: int 200
  $ headers    :List of 6
   ..$ server                     : chr &quot;nginx/1.10.3&quot;
-  ..$ date                       : chr &quot;Sun, 19 Mar 2023 17:23:33 GMT&quot;
+  ..$ date                       : chr &quot;Thu, 18 May 2023 18:27:36 GMT&quot;
   ..$ content-type               : chr &quot;application/json&quot;
   ..$ content-length             : chr &quot;500&quot;
   ..$ connection                 : chr &quot;keep-alive&quot;
@@ -4214,7 +4217,7 @@ Attaching package: &#39;dplyr&#39;</code></pre>
   .. ..$ version: chr &quot;HTTP/1.1&quot;
   .. ..$ headers:List of 6
   .. .. ..$ server                     : chr &quot;nginx/1.10.3&quot;
-  .. .. ..$ date                       : chr &quot;Sun, 19 Mar 2023 17:23:33 GMT&quot;
+  .. .. ..$ date                       : chr &quot;Thu, 18 May 2023 18:27:36 GMT&quot;
   .. .. ..$ content-type               : chr &quot;application/json&quot;
   .. .. ..$ content-length             : chr &quot;500&quot;
   .. .. ..$ connection                 : chr &quot;keep-alive&quot;
@@ -4229,8 +4232,8 @@ Attaching package: &#39;dplyr&#39;</code></pre>
   ..$ name      : logi(0) 
   ..$ value     : logi(0) 
  $ content    : raw [1:500] 7b 22 6d 65 ...
- $ date       : POSIXct[1:1], format: &quot;2023-03-19 17:23:33&quot;
- $ times      : Named num [1:6] 0 0.0657 0.22 0.2201 0.3752 ...
+ $ date       : POSIXct[1:1], format: &quot;2023-05-18 18:27:36&quot;
+ $ times      : Named num [1:6] 0 0.0461 0.2033 0.2034 0.3624 ...
   ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;redirect&quot; &quot;namelookup&quot; &quot;connect&quot; &quot;pretransfer&quot; ...
  $ request    :List of 7
   ..$ method    : chr &quot;GET&quot;
@@ -4257,11 +4260,11 @@ Attaching package: &#39;dplyr&#39;</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ovni<span class="sc">$</span>headers<span class="sc">$</span>date</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Sun, 19 Mar 2023 17:23:33 GMT&quot;</code></pre>
+<pre><code>[1] &quot;Thu, 18 May 2023 18:27:36 GMT&quot;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ovni[[<span class="st">&quot;headers&quot;</span>]][[<span class="st">&quot;date&quot;</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Sun, 19 Mar 2023 17:23:33 GMT&quot;</code></pre>
+<pre><code>[1] &quot;Thu, 18 May 2023 18:27:36 GMT&quot;</code></pre>
 </div>
 </div>
 <p>On peut également afficher les noms des branches en partant de la racine puis en suivant l’arbre à l’aide de l’instruction <code>names()</code></p>
@@ -4452,16 +4455,16 @@ Attaching package: &#39;dplyr&#39;</code></pre>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">extract_ISS2</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         craft             name                          date
-1          ISS Sergey Prokopyev Sun, 19 Mar 2023 17:23:34 GMT
-2          ISS   Dmitry Petelin Sun, 19 Mar 2023 17:23:34 GMT
-3          ISS      Frank Rubio Sun, 19 Mar 2023 17:23:34 GMT
-4  Shenzhou 15      Fei Junlong Sun, 19 Mar 2023 17:23:34 GMT
-5  Shenzhou 15    Deng Qingming Sun, 19 Mar 2023 17:23:34 GMT
-6  Shenzhou 15         Zhang Lu Sun, 19 Mar 2023 17:23:34 GMT
-7          ISS    Stephen Bowen Sun, 19 Mar 2023 17:23:34 GMT
-8          ISS    Warren Hoburg Sun, 19 Mar 2023 17:23:34 GMT
-9          ISS  Sultan Alneyadi Sun, 19 Mar 2023 17:23:34 GMT
-10         ISS   Andrey Fedyaev Sun, 19 Mar 2023 17:23:34 GMT</code></pre>
+1          ISS Sergey Prokopyev Thu, 18 May 2023 18:27:36 GMT
+2          ISS   Dmitry Petelin Thu, 18 May 2023 18:27:36 GMT
+3          ISS      Frank Rubio Thu, 18 May 2023 18:27:36 GMT
+4  Shenzhou 15      Fei Junlong Thu, 18 May 2023 18:27:36 GMT
+5  Shenzhou 15    Deng Qingming Thu, 18 May 2023 18:27:36 GMT
+6  Shenzhou 15         Zhang Lu Thu, 18 May 2023 18:27:36 GMT
+7          ISS    Stephen Bowen Thu, 18 May 2023 18:27:36 GMT
+8          ISS    Warren Hoburg Thu, 18 May 2023 18:27:36 GMT
+9          ISS  Sultan Alneyadi Thu, 18 May 2023 18:27:36 GMT
+10         ISS   Andrey Fedyaev Thu, 18 May 2023 18:27:36 GMT</code></pre>
 </div>
 </div>
 <p>Et si on est à l’aise avec les listes, on peut aussi exporter les résultats sous la forme d’une liste plutôt que d’un tableau, ce qui évite de répéter plusieurs fois la date d’extraction des données</p>
@@ -4483,7 +4486,7 @@ Attaching package: &#39;dplyr&#39;</code></pre>
 <span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(x<span class="sc">$</span>Data, <span class="at">caption=</span><span class="fu">paste</span>(<span class="st">&quot;Passagers de l&#39;ISS :&quot;</span>, x<span class="sc">$</span>Update))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped">
-<caption>Passagers de l’ISS : Sun, 19 Mar 2023 17:23:34 GMT</caption>
+<caption>Passagers de l’ISS : Thu, 18 May 2023 18:27:37 GMT</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">craft</th>
