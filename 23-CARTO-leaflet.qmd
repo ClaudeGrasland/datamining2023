@@ -1,5 +1,5 @@
 ---
-title: "Cartograpie dynamique avec leaflet"
+title: "Carto-leaflet"
 author: "Claude Grasland"
 format: html
 embed-resources: true
@@ -37,6 +37,7 @@ library(htmltools)
 # Appel d'API
 library(httr)
 library(jsonlite)
+library(geojsonsf)
 
 ```
 
@@ -696,4 +697,337 @@ visu_appart("94033","2015")
 Quels sont les avantages et inconvénients du téléchargement interactif des données à l'aide d'une API ?
 
 Commet pourriez vous procéder pour obtenir une fonction d'affichage plus rapide ?
+
+
+## Cartographie de polygones
+
+On reprend l'exercice précédent mais en essayant de construire une cartographie par IRIS. L'exemple de départ est (comme toujours) celui de Sucy en Brie.
+
+
+### Extraction des IRIS
+
+On commence par charger le fonds de carte de la commune qui nous intéresse en précisant l'année car le découpage en IRIS change au cours du temps. On va prendre ici l'exemple du 13e arrondissement de Paris
+
+```{r}
+name <-"Paris"
+ann <- 2020
+
+
+url<-paste0("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/georef-france-iris-millesime/exports/geojson?lang=fr&refine=year%3A%22",ann,"%22&refine=com_name%3A%22",name,"%22")
+map_iris<-geojson_sf(url) %>% select(iris_code, iris_name)
+map_iris$iris_code <- gsub('["','',map_iris$iris_code,fixed = T)
+map_iris$iris_code <- gsub('"]','',map_iris$iris_code,fixed = T)
+map_iris$iris_name <- gsub('["','',map_iris$iris_name,fixed = T)
+map_iris$iris_name <- gsub('"]','',map_iris$iris_name,fixed = T)
+head(map_iris)
+
+# sélectin du 13e
+map_iris <- map_iris %>% filter(substr(iris_code,1,5)=="75113")
+plot(map_iris$geometry)
+
+
+```
+
+
+### Extraction des dvf
+
+On charge ensuite le fichier dvf des maisons et appartements de cette même commune au format geojson. On le nettoie pour ne garder que les ventes intéressantes. On remarque que les espaces sont remplacés par le code `%20` dans l'URL. 
+
+
+```{r}
+name <-"Paris%2013e%20Arrondissement"
+
+myurl<-paste0("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime/exports/geojson?lang=fr&refine=com_name%3A%22",name,"%22")  
+map_dvf<-geojson_sf(myurl)
+
+
+
+
+# Select variable
+map_dvf <-map_dvf %>% filter(nature_mutation =="Vente",
+                             type_local %in% c("Maison","Appartement")) %>%
+                     mutate( id =id_mutation,
+                             ann = substr(id,1,4),
+                             typ = type_local,
+                             val = valeur_fonciere,
+                             sup = surface_reelle_bati,
+                             nbp = nombre_pieces_principales,
+                             prixm2 = val/sup)%>%
+                      select(id,ann,typ,val,sup,nbp,prixm2)
+
+# Eliminate duplicated id
+x<-table(map_dvf$id)
+duplic<-names(x[x>1])
+map_dvf<-map_dvf %>% filter(!(id %in% duplic))
+
+head(map_dvf)
+
+# visualize
+plot(map_iris$geometry, col="lightyellow",border="gray60")
+plot(map_dvf$geometry,add=T,pch=20, col="blue",cex=0.4)
+
+```
+
+### Ajout du code iris au fichier dvf
+
+On procède à une intersection entre les deux fonds de carte pour récupérer le code iris de chaque vente et on l'ajoute au fichier dvf.
+
+```{r}
+w<-as.numeric(st_intersects(map_dvf,map_iris))
+map_dvf$iris_num<-w
+tab_iris<-st_drop_geometry(map_iris)
+tab_iris$iris_num<-1:length(tab_iris$iris_code)
+map_dvf<-left_join(map_dvf,tab_iris) %>% filter(is.na(iris_code)==F)
+head(map_dvf)
+```
+
+### Création d'indicateurs par IRIS
+
+```{r}
+tab_mai <- map_dvf %>% st_drop_geometry() %>% 
+                               filter(typ == "Maison") %>%
+                               group_by(iris_code) %>%
+                               summarise(mai_nb = n(),
+                                         mai_sup_mean = mean(sup,na.rm=T),
+                                         mai_val_mean = mean(val,na.rm=T),
+                                         mai_nbp_mean = mean(nbp,na.rm=T),
+                                         mai_prixm2_med = median(prixm2,na.rm=T))
+
+tab_app <- map_dvf %>% st_drop_geometry() %>% 
+                               filter(typ == "Appartement") %>%
+                               group_by(iris_code) %>%
+                               summarise(app_nb = n(),
+                                         app_sup_mean = mean(sup,na.rm=T),
+                                         app_val_mean = mean(val,na.rm=T),
+                                         app_nbp_mean = mean(nbp,na.rm=T),
+                                         app_prixm2_med = median(prixm2,na.rm=T))                            
+map_iris <- map_iris %>% left_join(tab_mai) %>% left_join(tab_app)
+
+```
+
+
+
+### Affichage leaflet avec `addPolygons()`
+
+La fonction leaflet de base pour tracer des polygones est `addPolygons()`  qui est l'équivalent de `addMarkers()` que l'on a vu précédemment. Mais la différence importante est que l'on peut désormais fournir un fichier sf aux fonctions `addPolygons` et `addMarkers` puis accéder aux variables contenues dans ce fichier en utilisant un tilde '~'suivi du nom de la variable.  
+
+
+On peut par exemple construire une carte des iris avec un label donnant le nom
+
+```{r}
+# centrage de la carte
+
+
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        color = "red",
+                        label = ~iris_name)
+map
+```
+
+On peut ajuster le tracé des  lignes de contour et en régler l'épaisseur (`weight= `), la couleur (`color =`) ou l'opacité (`opacity =`). On peut de la même manière régler le remplissage des polygones en choisissant une autre couleur (`fillColor =`) et une opacité (`fillOpacity=`). 
+
+On peut évidemment superposer plusieurs couches de polygones comme on le montre ici en ajoutant le contour de la commune dont on ne trace que le contour (`fill = FALSE`)
+
+
+```{r}
+
+map_com <- map_iris %>% summarise()
+nbiris<-dim(map_iris)[1]
+mycolors = rainbow(n=nbiris)
+
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        color = "white",
+                        weight= 1,
+                        opacity = 0.4,
+                        fillColor = mycolors,
+                        fillOpacity = 0.3,
+                        label = ~iris_name) %>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+ 
+map
+```
+
+
+### Cartes choroplèthes avec` colorBin()`
+
+
+De la même manière que nous avons affiché une couleur différente  dans chaque IRIS, nous pouvons proposer une carte choroplèthe et ajouter un popup donnant la valeur de l'indicateur si l'on clique. La seule difficulté est de préparer une palette de couleur à l'aide de l'une des fonction `colorNumeric()`, `colorBin()`, `colorQuantile()` ou `colorFactor()`. 
+
+Voyons un exemple sur la variable app_prixm2_med qui est le prix médian de vente des apparements.  
+
+```{r}
+# Choix de la variable
+   myvar <-round(map_iris$app_prixm2_med,0)
+
+# Choix des classes 
+    mycut<-c(5000, 6000, 7000, 8000,9000,10000, 11000)
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('YlOrRd', 
+                       myvar,
+                       bins=mycut)
+
+
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        fillColor = ~mypal(app_prixm2_med),
+                        fillOpacity = 0.5,
+                        color = "white",
+                        label = myvar,
+                    #    label = ~app_prixm2_med,
+ #                       popup = mypop,
+                        weight = 1) %>%
+            addLegend(data = map_iris,
+                      pal = mypal, 
+                      title = "prix au m2",
+                      values =~app_prixm2_med, 
+                      position = 'topright') %>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+ 
+map
+```
+
+
+### Cartes de stock avec `addCircleMarkers()`
+
+Notre carte est intéressante mais elle ne permet pas de voir quelle est la quantité de vente qui a servi de base au calcul du prix médian
+
+Nous allons donc superposer sur la carte précédente le nombre de ventes d'appartement. Puisqu'il s'agit d'un stock, nous devrons utiliser un figuré ponctuel avec une surface proportionnelle au nombre de ventes.
+
+
+```{r}
+# Choix de la variable
+   myvar <-round(map_iris$app_prixm2_med,0)
+
+# Choix des classes 
+    mycut<-c(5000, 6000, 7000, 8000,9000,10000, 11000)
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('YlOrRd', 
+                       myvar,
+                       bins=mycut)
+  
+   
+# Calcul du diamètre des cercles
+   myradius <-8*sqrt(map_iris$app_nb/max(map_iris$app_nb, na.rm=T))
+   
+# Calcul des centroides des iris
+   map_iris_ctr <-st_centroid(map_iris)
+
+   map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        fillColor = ~mypal(app_prixm2_med),
+                        fillOpacity = 0.5,
+                        color = "white",
+                        label = myvar,
+ #                       popup = mypop,
+                        weight = 1) %>%
+            addLegend(data = map_iris,
+                      pal = mypal, 
+                      title = "prix médian au m2",
+                      values =~app_prixm2_med, 
+                      position = 'topright') %>%
+            addCircleMarkers(data=map_iris_ctr,
+                          #    lat = ~lat,
+                          #    lng = ~lng,
+                              radius = myradius,
+                              stroke = FALSE,
+                              label = ~app_nb,
+                              fillColor = "gray50",
+                              fillOpacity = 0.5)%>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+   
+map
+```
+
+### La cerise sur le gâteau ...
+
+Et pour terminer notre belle carte, nous allons ajouter une fenêtre popup apportant à l'utilisateur tous les renseignements sur les appartements vendus chaque IRIS. Pour cela nous allons devoir construire chaque fenêtre popup au format HTML préalablement à l'affichage des cartes en utilisant des outils issus sdes packaghes `htmltools`et `htmlwidgets`. On supprime les labels des deux couches, l'utilisateur ayant désormais juste à cliquer sur un Iris pour obtenir tous les renseignements dans une seule fenêtre
+
+
+```{r}
+# Choix de la variable
+   myvar <-round(map_iris$app_prixm2_med,0)
+summary(myvar)
+
+# Choix des classes 
+    mycut<-c(5000, 6000, 7000, 8000,9000,10000, 11000)
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('YlOrRd', 
+                       myvar,
+                       bins=mycut)
+
+   
+# Calcul du diamètre des cercles
+   myradius <-8*sqrt(map_iris$app_nb/max(map_iris$app_nb, na.rm=T))
+   
+# Calcul des centroides des iris
+   map_iris_ctr <-st_centroid(map_iris)
+   
+# Préparation des popups
+      mypopups <- lapply(seq(nrow(map_iris)), function(i) {
+      paste0(  paste("Iris               : " ,map_iris$iris_name[i]), '<br>', 
+               paste("Nb. de ventes      : " ,map_iris$app_nb[i]), '<br>', 
+               paste("Prix de vente moyen: " ,round(map_iris$app_val_mean[i],0)), '<br>',   
+               paste("Surface moyenne    : " ,round(map_iris$app_sup_mean[i],0)), '<br>',    
+               paste("Nb. de pièces moyen: " ,round(map_iris$app_nbp_mean[i],1)), '<br>',                  
+               paste("Prix au m2 médian  :", round(map_iris$app_prixm2_med[i],0))
+            ) 
+            })
+      mypopups<-lapply(mypopups, htmltools::HTML)
+   
+   
+
+   map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 13) %>% 
+            addPolygons(data = map_iris,
+                        fillColor = ~mypal(app_prixm2_med),
+                        fillOpacity = 0.5,
+                        color = "white",
+#                        label = ~app_prixm2_med,
+                        popup = mypopups,
+                        weight = 1) %>%
+            addLegend(data = map_iris,
+                      pal = mypal, 
+                      title = "prix médian au m2",
+                      values =~app_prixm2_med, 
+                      position = 'topright') %>%
+            addCircleMarkers(data=map_iris_ctr,
+                          #    lat = ~lat,
+                          #    lng = ~lng,
+                              radius = myradius,
+                              stroke = FALSE,
+#                              label = ~app_nb,
+                              fillColor = "gray50",
+                              fillOpacity = 0.5)%>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+   
+map
+
+
+```
 
