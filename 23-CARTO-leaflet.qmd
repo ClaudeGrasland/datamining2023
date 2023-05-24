@@ -285,6 +285,8 @@ map
 ```
 
 
+
+
 ### Réglage de la taille des cercles
 
 On règle la taille des cercles en fonction du nombre de pièces
