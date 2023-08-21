@@ -206,7 +206,7 @@ knitr::include_graphics("img/coord_odg.png")
 
 On passe ensuite une requête incluant le paramètre `geofilter.distance()`assortie des trois paramètres de latitude (en degré décimal), longitude (en degré décimal) et distance (en mètres) avec comme séparateur `%2C`ce qui donne au final un tableau ne comportant que 3 arbres remarquables à moins de deux kilomètres du point choisi :
 
-```{r}
+```{r, eval=F}
 
 x<-GET("https://public.opendatasoft.com/api/records/1.0/search/?dataset=arbresremarquablesparis2011&q=&rows=1000&geofilter.distance=48.82670%2C2.38242%2C2000")
   y<-fromJSON(rawToChar((x$content)))
@@ -256,7 +256,7 @@ Mais notre fonction peut également marcher pour d'autres tableaux si ceux-ci on
 
 
 
-```{r}
+```{r, eval=F}
 tab<-get_data_geo(idtab = "sirene_v3",
                   rows=1000,
                   start=0,

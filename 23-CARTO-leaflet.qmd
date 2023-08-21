@@ -1,0 +1,1035 @@
+---
+title: "Carto-leaflet"
+author: "Claude Grasland"
+format: html
+embed-resources: true
+---
+
+
+```{r  echo=TRUE, cache=FALSE, warning=FALSE}
+library(knitr)
+## Global options
+options(max.print="80")
+opts_chunk$set(echo=TRUE,
+               cache=FALSE,
+               prompt=FALSE,
+               tidy=FALSE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               options(scipen=999))
+opts_knit$set(width=75)
+
+# Packages utilitaires
+library(dplyr)
+library(rmdformats)
+
+# Packages graphiques
+library(ggplot2)
+library(RColorBrewer)
+
+#packages cartographiques 
+library(sf)
+library(leaflet)
+library(htmlwidgets)
+library(htmltools)
+
+# Appel d'API
+library(httr)
+library(jsonlite)
+library(geojsonsf)
+
+```
+
+
+
+## Premiers pas
+
+<p style="border:0.5px; border-style:solid; border-color:navajowhite3; padding: 1em; font-size:15px">
+**OBJECTIFS** : Ce premier cours propose de fournir les bases élémentaires du logiciel Leaflet. Il est très largement inspiré d'un article d'Elena Salette publié sur l'excellent site de formation ThinkR et intitulé [Cartographie interactive : comment visualiser mes données spatiales de manière dynamique avec leaflet ?](https://thinkr.fr/cartographie-interactive-comment-visualiser-mes-donnees-spatiales-de-maniere-dynamique-avec-leaflet/) 
+</p>
+
+<p style="border:0.5px; border-style:solid; border-color:navajowhite3; padding: 1em; font-size:15px">
+**BUG WARNING** : Il peut arriver que la transformation du fichier .Rmd en .html ne s'opère pas et que vous voyiez apparaître le message d'erreur suivant **RMarkdown cannot knit: html_dependency not found**. Ce message d'erreur persiste même après avoir corrigé le code... ce qui est très pénible. Après avoir cherché sur les forums de discussion, j'ai trouvé une première réponse [sur stackoverflow](https://stackoverflow.com/questions/53750383/rmarkdown-error-path-for-html-dependency-not-found) qui consiste simplement à aller sur **la flèche descendnate à droite du bouton knitr** et effectuer un **clear knitr cache** avant de relancer le Knitr. Apparemment ça marche, sans que je sache bien pourquoi. Mais la solution la plus efficace semble être d'insérer une option **cache=FALSE** dans les options globales du fichier Markdown. Cela va sans doute un peu ralentir l'affichage des pages HTML,mais évite les problèmes. On pourra toujours rétablir **cache=TRUE** si nécessaire
+</p>
+
+
+
+Notre premier objectif très limité sera de construire une carte interactive utilisant le fonds de carte OpenStreetMap que l'on pourra zoomer en avant ou en arrière. La carte comportera la localisation de la place de la gare à Sucy-en-Brie avec une "épingle" de localisation comportant une photographie de la gare et un petit texte de promotion de celle-ci. 
+
+### Lancement avec `leaflet()`
+
+Nous allons avoir besoin des packages suivants :
+
+- `leaflet` puisque c'est l'objet même du cours !
+- `dplyr` afin de pouvoir construire des programmes utilisant des pipes `%>%`
+- `sf` pour charger des fonds de carte de différents types (points, lignes polygones)
+- `htmltools` et `htmlwidgets` pour ajouter des popups interactifs sur notre carte
+
+Pour vérifier que le package leaflet est bien installé, nous créons une première carte (vide !)
+
+```{r}
+map <- leaflet()
+
+map
+```
+
+Et il n'y a ... RIEN ! si ce n'est un bouton de zoom
+
+
+### Remplissage avec `addTiles()`
+
+On ajoute sur ce fond de carte vide des "tuiles" cartographiques qui sont des images se modifiant selon l'échelle pour apporter plus ou moins de détails. Par défaut, le fonds de carte de référence est le fonds `OpenStreetMap`
+
+```{r}
+library(leaflet)
+
+map <- leaflet() %>%
+          addTiles()
+
+map
+```
+La carte est désormais interactive et on peut effectuer des zooms ou se déplacer.
+
+
+
+
+### Calage avec `setView()`
+
+Nous allons ensuite choisir un point de référence, par exemple la place de la gare à Sucy-en-Brie. Pour trouver les coordonnées de latitude et longitude, la solution la plus simple est d'utiliser [Google Maps](https://www.google.fr/maps) puis de zoomer sur la zone d'étude et enfin d'**effectuer un click droit avec la souris sur le point dont on cherche les coordonnées** pour obtenir dans un popup les coordonnées recherchées : 
+
+![coordonnnées de la place de la gare de Sucy](img/gare_sucy_coord_googlemap.png)
+On peut alors procéder à une double opération de **centrage** de notre carte et de définition d'une **échelle d'observation** afin que la carte produite par `leaflet`couvre bien la zone qui nous intéresse. Cette double opération est réalisée à l'aide de la fonction `setView()` assortie des trois paramètre suivants :
+
+- `lng =` pour la longitude
+- `lat =` pour la latitude
+- `zoom =` pour le degré d'aggrandissement de la carte de 1 pour le Monde entier à 20 pour une vision ulra locale
+
+
+```{r}
+map <- leaflet() %>% 
+          addTiles() %>%
+          setView(lat = 48.77141, lng=2.50870, zoom = 17)
+
+map
+```
+
+Une fois qu'on a vérifié le centrage avec un zoom fort (ici 17), on peut refaire la carte en utilisant un zoom plus faible, par exemple un zoom de 12 permettant de visualiser toute la commune de Sucy et les communes voisines.
+
+```{r}
+map <- leaflet() %>% 
+          addTiles() %>%
+          setView(lat = 48.77141, lng=2.50870, zoom = 12)
+
+map
+```
+
+### Personalisation avec  `addProviderTiles()`
+
+Les tuiles OpenStreetMap qui servent de fonds de carte par défaut peuvent être remplacés par des tuiles personalisées fournies par des producteurs publics ou privés. On peut obtenir la liste des tuiles disponibles en tapant `providers` dans la console de R studio et les tester une par une. Mais il est souvent plus simple et plus rapide d'aller visualiser les tuiles disponibles sur [ce site web](http://leaflet-extras.github.io/leaflet-providers/preview/) où l'on peut centrer le monde sur sa zone d'étude et voir ce que donnent les différentes familles de tuiles. 
+
+A titre d'exemple, les tuiles `Stamen.Watercolor` donnent une touche pastel artistique à la carte :
+
+
+```{r}
+map <- leaflet() %>% 
+            addProviderTiles('Stamen.Watercolor') %>%
+          setView(lat = 48.77141, lng=2.50870, zoom = 12)
+
+map
+
+```
+
+Tandis que la couche `Esri.WorldTopoMap` fournit une imagerie précise mais de couleurs plus neutre que les tuiles `OpenStreetMap` , ce qui sera intéressant si on superspose des marqueurs de couleur vive. 
+
+
+```{r}
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+          setView(lat = 48.77141, lng=2.50870, zoom = 12)
+map
+
+```
+
+
+
+### Affichage d'un point avec `addMarkers()`
+
+L'usage le plus fréquent de `leaflet`consiste à ajouter des éléments de localisation ponctuelle appelés `markers`et de rendre ces objets ponctuels interactifs avec l'ouverture de fenêtres `popups`lorsqu'on clique dessus avec la souris. On va donc voir pas à pas comment construire de telles cartes interactives en partant du cas le plus simple (marqueur unique) pour aller vers les cas plus complexes (ensemble de marqueurs de taille, couleur et formes différentes).
+
+Nous allons commencer par indiquer l'emplacement de la place de la gare de Sucy-en-Brie sur notre carte précédente à l'aide de la fonction `addMarkers()` : 
+
+```{r}
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77141, lng=2.50870, zoom = 12) %>% 
+            addMarkers(lat = 48.77141, lng=2.50870)
+map
+```
+On constate que le marqueur donne bien la position choisi mais n'est pas interactif. Il faut ajouter plus de paramètres pour assurer l'interactivité. 
+
+### Ajout d'un `label`ou d'un `popup`
+
+On peut définir deux comportements d'un marker selon que la souris ne fait que passer dessus (`label`) ou selon que l'utilisateur effectue un click sur marker et déclenche l'ouverture d'une fenêtre (`popup`). Dans sa version la plus simple, l'interactivité consiste à ajouter une chaîne de caractère à ces deux paramètres. 
+
+```{r}
+icone_gare <-makeIcon(iconUrl = "img/gare_sucy_coord_googlemap.png")
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77141, lng=2.50870, zoom = 12) %>% 
+            addMarkers(lat = 48.77141, lng=2.50870,
+                      # En passant la souris
+                      label = "GARE DE SUCY-BONNEUIL", 
+                      # En cliquant sur l'icone
+                       popup = "La gare RER A de Sucy Bonneuil est bien reliée aux communes 
+                                 environnantes par un réseau de bus partant dans toutes les directions")
+map
+```
+
+
+### Amélioration du `popup`
+
+Mais on peut faire beaucoup mieux, notamment pour la fenêtre `popup`qui peut prendre la forme d'une mini-page web dont on fixe le contenu en html avec la fonction `paste0()` et les dimensions avec le sous-paramètre `popupOptions()`. 
+
+
+```{r}
+
+
+# Préparation de la fenêtre Popup
+    my_popup = paste0(
+      "<b> LA GARE DE SUCY",
+      "</b><br/><img src=https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Gare_Sucy-en-Brie.jpg/1200px-Gare_Sucy-en-Brie.jpg width='200px'><br/>",
+      "La gare RER A de Sucy Bonneuil est bien reliée aux communes 
+                                 environnantes par un réseau de bus partant dans toutes les directions.")
+
+
+  
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77141, lng=2.50870, zoom = 12) %>% 
+            addMarkers(lat = 48.77141, lng=2.50870,
+                      # En passant la souris
+                      label = "GARE DE SUCY-BONNEUIL", 
+                      # En cliquant sur l'icone
+                       popup = my_popup, 
+                      # Quelques options de la popup
+                        popupOptions = 
+                      list(maxHeight = 150, maxWidth = 200))
+map
+
+```
+
+
+### Prolongements
+
+Et voila, le tour est joué. Il faut maintenant réfléchir à la façon de construire une carte comportant un ensemble d'épingles similaires avec des couleurs ou des formes différentes, des messages différents, des photographies variées ... Il ne sera alors évidemment pas possible d'ajouter une commande addMarkers() pour chaque épingle si la carte en comporte des centaines. 
+
+Si vous avez bien compris ce cours, vous pourrez trouver des réponses en lisant de façon autonome le reste de l'article dont nous nous somme inspiré : [Cartographie interactive : comment visualiser mes données spatiales de manière dynamique avec leaflet ?](https://thinkr.fr/cartographie-interactive-comment-visualiser-mes-donnees-spatiales-de-maniere-dynamique-avec-leaflet/) 
+
+## Cartographie de points
+
+
+Nous allons prendre comme exemple la cartographie des ventes de maisons issues de la base de données dvf qui a fait l'objet du cours. 
+
+
+
+### Préparation des données
+
+On télécharge à titre d'exemple les ventes de maison à Sucy-en-Brie en 2020 en ne conservant que celles pour lesquelles on dispose de la surface du logement et de celle du terrain.
+
+```{r}
+
+ x<-GET("https://public.opendatasoft.com//api/records/1.0/search/?dataset=buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime&q=&rows=10000&facet=date_mutation&facet=nature_mutation&facet=com_code&facet=type_local&refine.date_mutation=2020&refine.nature_mutation=Vente&refine.type_local=Maison&refine.com_code=94071")
+
+w<-rawToChar((x$content))
+d<-fromJSON(w)
+t<-d$records$fields
+
+sel<-t %>% select(latitude,
+                  longitude,
+                  nbp=nombre_pieces_principales,
+                  surf_bat=surface_reelle_bati,
+                  surf_ter = surface_terrain,
+                  val = valeur_fonciere) %>% 
+          mutate(prixm2 = val/surf_bat)
+
+sel<-sel[complete.cases(sel)==T,]
+
+kable(head(sel))
+summary(sel)
+
+
+```
+
+
+
+### Cartographie des localisations
+
+On commence par créer une carte des localisations des ventes de maison avec AddCircleMarkers()
+
+
+```{r}
+
+  
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77, lng=2.53, zoom = 13) %>%
+  
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude)
+
+map
+```
+
+
+
+
+### Réglage de la taille des cercles
+
+On règle la taille des cercles en fonction du nombre de pièces
+
+
+```{r}
+# Calcul du diamètre des cercles
+  sel$myradius <-10*sqrt(sel$nbp/max(sel$nbp,na.rm=T))
+  
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77, lng=2.53, zoom = 13) %>%
+  
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude,
+                              radius= ~myradius,    # diamètre
+                              stroke=FALSE,         # pas de bordure           
+                              fillOpacity = 0.5)    # opacité 
+            
+                              
+
+map
+```
+
+### Réglage de la couleur des cercles 
+
+On fait varier la couleur des cercles en fonction du prix au m2
+
+
+```{r}
+# Calcul du diamètre des cercles
+  sel$myradius <-10*sqrt(sel$nbp/max(sel$nbp,na.rm=T))
+summary(sel$prixm2)
+# Choix des classes 
+    mycut<-round(quantile(sel$prixm2,probs = c(0,0.2,0.4,0.6,0.8,1)),0)
+    
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('Spectral', 
+                       reverse = T,
+                       sel$prixm2,
+                       bins=mycut)
+  
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77, lng=2.53, zoom = 13) %>%
+  
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude,
+                              
+                              radius= ~myradius,    # diamètre
+                              
+                              stroke=TRUE,          # bordure   
+                              weight=1  ,           # épaisseur de la bordure
+                              color= "black",      # couleur de la bordure
+                              opacity = 0.7  ,       # opacité de la bordure 
+                              
+                              fillOpacity = 0.5,    # opacité 
+                              fillColor = ~mypal(prixm2)
+                              )    %>%
+              addLegend(data = sel,
+                      pal = mypal, 
+                      title = "Prix / m2",
+                      values =~prixm2, 
+                      position = 'topright') 
+            
+                              
+
+map
+```
+
+
+### Ajout d'un popup d'information
+
+On rajoute un popup pour afficher toutes les informations sur chaque vente 
+
+
+```{r}
+# Calcul du diamètre des cercles
+  sel$myradius <-10*sqrt(sel$nbp/max(sel$nbp,na.rm=T))
+
+# Choix des classes 
+    mycut<-round(quantile(sel$prixm2,probs = c(0,0.2,0.4,0.6,0.8,1)),0)
+    
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('Spectral', 
+                       reverse = T,
+                       sel$prixm2,
+                       bins=mycut)
+  
+   
+   
+ # Préparation des popups
+      mypopups <- lapply(seq(nrow(sel)), function(i) {
+      paste0(  paste("Prix de vente       : " ,sel$val[i]), '<br>', 
+               paste("Nb. de pièces       : " ,sel$nbp[i]), '<br>', 
+               paste("Surface du logement : ", sel$surf_bat[i]), '<br>',
+               paste("Surface du terrain  : " ,round(sel$surf_ter[i],1)))
+            
+            })
+      mypopups<-lapply(mypopups, htmltools::HTML)  
+
+   
+  
+# Réalisation de la carte
+map <- leaflet() %>% 
+           addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.77, lng=2.53, zoom = 13) %>%
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude,
+                              
+                              radius= ~myradius,    # diamètre
+                              
+                              stroke=TRUE,          # bordure   
+                              weight=1  ,           # épaisseur de la bordure
+                              color= "black",      # couleur de la bordure
+                              opacity = 0.7  ,       # opacité de la bordure 
+                              
+                              fillOpacity = 0.5,    # opacité 
+                              fillColor = ~mypal(prixm2),
+                              
+                             popup = mypopups,
+                              )    %>%
+              addLegend(data = sel,
+                      pal = mypal, 
+                      title = "Prix au m2",
+                      values =~prixm2, 
+                      position = 'topright') 
+            
+                              
+
+map
+```
+
+### Choix des tuiles
+
+On fait varier les tuiles pour offrir la possibilité de visualiser la position des maisons sur un plan ou sur une photo aérienne.
+
+```{r}
+
+
+# Calcul du diamètre des cercles
+  sel$myradius <-10*sqrt(sel$nbp/max(sel$nbp,na.rm=T))
+summary(sel$prixm2)
+# Choix des classes 
+    mycut<-round(quantile(sel$prixm2,probs = c(0,0.2,0.4,0.6,0.8,1)),0)
+    
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('Spectral', 
+                       reverse = T,
+                       sel$prixm2,
+                       bins=mycut)
+  
+   
+   
+ # Préparation des popups
+      mypopups <- lapply(seq(nrow(sel)), function(i) {
+      paste0(  paste("Prix de vente       : " ,sel$val[i]), '<br>', 
+               paste("Nb. de pièces       : " ,sel$nbp[i]), '<br>', 
+               paste("Surface du logement : ", sel$surf_bat[i]), '<br>',
+               paste("Surface du terrain  : " ,round(sel$surf_ter[i],1)))
+            
+            })
+      mypopups<-lapply(mypopups, htmltools::HTML)  
+
+   
+  
+# Réalisation de la carte
+map <- leaflet() %>% 
+               # Tuiles
+               addTiles(group = "OSM ") %>%
+               addProviderTiles('Esri.WorldTopoMap', group = "ESRI topo.") %>%
+               addProviderTiles('Esri.WorldImagery', group = "ESRI photo.") %>%
+              # Contrôle des tuiles
+               addLayersControl( baseGroups = c("OSM","ESRI topo.","ESRI photo."),
+                                 position = "bottomright") %>%
+            setView(lat = 48.77, lng=2.53, zoom = 13) %>%
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude,
+                              
+                              radius= ~myradius,    # diamètre
+                              
+                              stroke=TRUE,          # bordure   
+                              weight=1  ,           # épaisseur de la bordure
+                              color= "black",      # couleur de la bordure
+                              opacity = 0.7  ,       # opacité de la bordure 
+                              
+                              fillOpacity = 0.5,    # opacité 
+                              fillColor = ~mypal(prixm2),
+                              
+                             popup = mypopups,
+                              )    %>%
+              addLegend(data = sel,
+                      pal = mypal, 
+                      title = "Prix au m2",
+                      values =~prixm2, 
+                      position = 'topright') 
+            
+                              
+
+map
+
+
+```
+
+
+### Exercice n°1
+
+Construire une carte interactive des ventes d'appartement dans le 13e arrondissement en 2021 en adaptant légèrement le programme précédent (en particulier : ne plus retenir la surface du terrain)
+
+
+```{r, echo=FALSE}
+
+ x<-GET("https://public.opendatasoft.com//api/records/1.0/search/?dataset=buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime&q=&rows=10000&facet=date_mutation&facet=nature_mutation&facet=com_code&facet=type_local&refine.date_mutation=2020&refine.nature_mutation=Vente&refine.type_local=Appartement&refine.com_code=75113")
+
+w<-rawToChar((x$content))
+d<-fromJSON(w)
+t<-d$records$fields
+
+sel<-t %>% select(latitude,
+                  longitude,
+                  nbp=nombre_pieces_principales,
+                  surf_bat=surface_reelle_bati,
+                  val = valeur_fonciere) %>% 
+          mutate(prixm2 = val/surf_bat)
+
+sel<-sel[complete.cases(sel)==T,]
+
+
+
+# Calcul du diamètre des cercles
+  sel$myradius <-1+5*sqrt(sel$nbp/max(sel$nbp,na.rm=T))
+summary(sel$prixm2)
+# Choix des classes 
+    mycut<-round(quantile(sel$prixm2,probs = c(0,0.2,0.4,0.6,0.8,1)),0)
+    
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('Spectral', 
+                       reverse = T,
+                       sel$prixm2,
+                       bins=mycut)
+  
+   
+   
+ # Préparation des popups
+      mypopups <- lapply(seq(nrow(sel)), function(i) {
+      paste0(  paste("Prix de vente       : " ,sel$val[i]), '<br>', 
+               paste("Nb. de pièces       : " ,sel$nbp[i]), '<br>', 
+               paste("Surface du logement : ", sel$surf_bat[i]))
+            
+            })
+      mypopups<-lapply(mypopups, htmltools::HTML)  
+
+# Calcul des latitudes et longitudes de référence
+latref<-mean(sel$latitude)
+lonref<-mean(sel$longitude)  
+# Réalisation de la carte
+map <- leaflet() %>% 
+               # Tuiles
+               addTiles(group = "OSM ") %>%
+               addProviderTiles('Esri.WorldTopoMap', group = "ESRI topo.") %>%
+               addProviderTiles('Esri.WorldImagery', group = "ESRI photo.") %>%
+              # Contrôle des tuiles
+               addLayersControl( baseGroups = c("OSM","ESRI topo.","ESRI photo."),
+                                 position = "bottomright") %>%
+            setView(lat = latref, lng=lonref, zoom = 13) %>%
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude,
+                              
+                              radius= ~myradius,    # diamètre
+                              
+                              stroke=TRUE,          # bordure   
+                              weight=1  ,           # épaisseur de la bordure
+                              color= "black",      # couleur de la bordure
+                              opacity = 0.7  ,       # opacité de la bordure 
+                              
+                              fillOpacity = 0.5,    # opacité 
+                              fillColor = ~mypal(prixm2),
+                              
+                             popup = mypopups,
+                              )    %>%
+              addLegend(data = sel,
+                      pal = mypal, 
+                      title = "Prix au m2",
+                      values =~prixm2, 
+                      position = 'topright') 
+            
+                              
+
+map
+
+
+
+```
+
+### Exercice n°2
+
+En repartant du programme précédent, construire une fonction d'affichage cartographique du prix des appartements pour n'importe quel code INSEE  et n'importe quelle date.
+
+```{r, echo=FALSE}
+
+visu_appart<-function(code="75113",ann = "2020"){ 
+
+myurl<-paste0("https://public.opendatasoft.com//api/records/1.0/search/?dataset=buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime&q=&rows=10000&facet=date_mutation&facet=nature_mutation&facet=com_code&facet=type_local&refine.date_mutation=",ann,
+            "&refine.nature_mutation=Vente&refine.type_local=Appartement&refine.com_code=", code)  
+ x<-GET(myurl)
+
+w<-rawToChar((x$content))
+d<-fromJSON(w)
+t<-d$records$fields
+
+sel<-t %>% select(latitude,
+                  longitude,
+                  nbp=nombre_pieces_principales,
+                  surf_bat=surface_reelle_bati,
+                  val = valeur_fonciere) %>% 
+          mutate(prixm2 = val/surf_bat)
+
+sel<-sel[complete.cases(sel)==T,]
+
+
+
+# Calcul du diamètre des cercles
+  sel$myradius <-1+5*sqrt(sel$nbp/max(sel$nbp,na.rm=T))
+summary(sel$prixm2)
+# Choix des classes 
+    mycut<-round(quantile(sel$prixm2,probs = c(0,0.2,0.4,0.6,0.8,1)),0)
+    
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('Spectral', 
+                       reverse = T,
+                       sel$prixm2,
+                       bins=mycut)
+  
+   
+   
+ # Préparation des popups
+      mypopups <- lapply(seq(nrow(sel)), function(i) {
+      paste0(  paste("Prix de vente       : " ,sel$val[i]), '<br>', 
+               paste("Nb. de pièces       : " ,sel$nbp[i]), '<br>', 
+               paste("Surface du logement : ", sel$surf_bat[i]))
+            
+            })
+      mypopups<-lapply(mypopups, htmltools::HTML)  
+
+# Calcul des latitudes et longitudes de référence
+latref<-mean(sel$latitude)
+lonref<-mean(sel$longitude)  
+# Réalisation de la carte
+map <- leaflet() %>% 
+               # Tuiles
+               addTiles(group = "OSM ") %>%
+               addProviderTiles('Esri.WorldTopoMap', group = "ESRI topo.") %>%
+               addProviderTiles('Esri.WorldImagery', group = "ESRI photo.") %>%
+              # Contrôle des tuiles
+               addLayersControl( baseGroups = c("OSM","ESRI topo.","ESRI photo."),
+                                 position = "bottomright") %>%
+            setView(lat = latref, lng=lonref, zoom = 13) %>%
+             addCircleMarkers(data=sel,
+                              lat = ~latitude,
+                              lng = ~longitude,
+                              
+                              radius= ~myradius,    # diamètre
+                              
+                              stroke=TRUE,          # bordure   
+                              weight=1  ,           # épaisseur de la bordure
+                              color= "black",      # couleur de la bordure
+                              opacity = 0.7  ,       # opacité de la bordure 
+                              
+                              fillOpacity = 0.5,    # opacité 
+                              fillColor = ~mypal(prixm2),
+                              
+                             popup = mypopups,
+                              )    %>%
+              addLegend(data = sel,
+                      pal = mypal, 
+                      title = "Prix au m2",
+                      values =~prixm2, 
+                      position = 'topright') 
+            
+                              
+
+return(map)
+}
+
+
+
+
+```
+
+On applique au 16e arrondissemen en 2018
+
+```{r}
+visu_appart("75116","2018")
+```
+On applique à Fontenay-Sous-Bois en 2015 :
+
+```{r}
+visu_appart("94033","2015")
+```
+
+### Exercice n°3
+
+Quels sont les avantages et inconvénients du téléchargement interactif des données à l'aide d'une API ?
+
+Commet pourriez vous procéder pour obtenir une fonction d'affichage plus rapide ?
+
+
+## Cartographie de polygones
+
+On reprend l'exercice précédent mais en essayant de construire une cartographie par IRIS. L'exemple de départ est (comme toujours) celui de Sucy en Brie.
+
+
+### Extraction des IRIS
+
+On commence par charger le fonds de carte de la commune qui nous intéresse en précisant l'année car le découpage en IRIS change au cours du temps. On va prendre ici l'exemple du 13e arrondissement de Paris
+
+```{r}
+name <-"Paris"
+ann <- 2020
+
+
+url<-paste0("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/georef-france-iris-millesime/exports/geojson?lang=fr&refine=year%3A%22",ann,"%22&refine=com_name%3A%22",name,"%22")
+map_iris<-geojson_sf(url) %>% select(iris_code, iris_name)
+map_iris$iris_code <- gsub('["','',map_iris$iris_code,fixed = T)
+map_iris$iris_code <- gsub('"]','',map_iris$iris_code,fixed = T)
+map_iris$iris_name <- gsub('["','',map_iris$iris_name,fixed = T)
+map_iris$iris_name <- gsub('"]','',map_iris$iris_name,fixed = T)
+head(map_iris)
+
+# sélectin du 13e
+map_iris <- map_iris %>% filter(substr(iris_code,1,5)=="75113")
+plot(map_iris$geometry)
+
+
+```
+
+
+### Extraction des dvf
+
+On charge ensuite le fichier dvf des maisons et appartements de cette même commune au format geojson. On le nettoie pour ne garder que les ventes intéressantes. On remarque que les espaces sont remplacés par le code `%20` dans l'URL. 
+
+
+```{r}
+name <-"Paris%2013e%20Arrondissement"
+
+myurl<-paste0("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime/exports/geojson?lang=fr&refine=com_name%3A%22",name,"%22")  
+map_dvf<-geojson_sf(myurl)
+
+
+
+
+# Select variable
+map_dvf <-map_dvf %>% filter(nature_mutation =="Vente",
+                             type_local %in% c("Maison","Appartement")) %>%
+                     mutate( id =id_mutation,
+                             ann = substr(id,1,4),
+                             typ = type_local,
+                             val = valeur_fonciere,
+                             sup = surface_reelle_bati,
+                             nbp = nombre_pieces_principales,
+                             prixm2 = val/sup)%>%
+                      select(id,ann,typ,val,sup,nbp,prixm2)
+
+# Eliminate duplicated id
+x<-table(map_dvf$id)
+duplic<-names(x[x>1])
+map_dvf<-map_dvf %>% filter(!(id %in% duplic))
+
+head(map_dvf)
+
+# visualize
+plot(map_iris$geometry, col="lightyellow",border="gray60")
+plot(map_dvf$geometry,add=T,pch=20, col="blue",cex=0.4)
+
+```
+
+### Ajout du code iris au fichier dvf
+
+On procède à une intersection entre les deux fonds de carte pour récupérer le code iris de chaque vente et on l'ajoute au fichier dvf.
+
+```{r}
+w<-as.numeric(st_intersects(map_dvf,map_iris))
+map_dvf$iris_num<-w
+tab_iris<-st_drop_geometry(map_iris)
+tab_iris$iris_num<-1:length(tab_iris$iris_code)
+map_dvf<-left_join(map_dvf,tab_iris) %>% filter(is.na(iris_code)==F)
+head(map_dvf)
+```
+
+### Création d'indicateurs par IRIS
+
+```{r}
+tab_mai <- map_dvf %>% st_drop_geometry() %>% 
+                               filter(typ == "Maison") %>%
+                               group_by(iris_code) %>%
+                               summarise(mai_nb = n(),
+                                         mai_sup_mean = mean(sup,na.rm=T),
+                                         mai_val_mean = mean(val,na.rm=T),
+                                         mai_nbp_mean = mean(nbp,na.rm=T),
+                                         mai_prixm2_med = median(prixm2,na.rm=T))
+
+tab_app <- map_dvf %>% st_drop_geometry() %>% 
+                               filter(typ == "Appartement") %>%
+                               group_by(iris_code) %>%
+                               summarise(app_nb = n(),
+                                         app_sup_mean = mean(sup,na.rm=T),
+                                         app_val_mean = mean(val,na.rm=T),
+                                         app_nbp_mean = mean(nbp,na.rm=T),
+                                         app_prixm2_med = median(prixm2,na.rm=T))                            
+map_iris <- map_iris %>% left_join(tab_mai) %>% left_join(tab_app)
+
+```
+
+
+
+### Affichage leaflet avec `addPolygons()`
+
+La fonction leaflet de base pour tracer des polygones est `addPolygons()`  qui est l'équivalent de `addMarkers()` que l'on a vu précédemment. Mais la différence importante est que l'on peut désormais fournir un fichier sf aux fonctions `addPolygons` et `addMarkers` puis accéder aux variables contenues dans ce fichier en utilisant un tilde '~'suivi du nom de la variable.  
+
+
+On peut par exemple construire une carte des iris avec un label donnant le nom
+
+```{r}
+# centrage de la carte
+
+
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        color = "red",
+                        label = ~iris_name)
+map
+```
+
+On peut ajuster le tracé des  lignes de contour et en régler l'épaisseur (`weight= `), la couleur (`color =`) ou l'opacité (`opacity =`). On peut de la même manière régler le remplissage des polygones en choisissant une autre couleur (`fillColor =`) et une opacité (`fillOpacity=`). 
+
+On peut évidemment superposer plusieurs couches de polygones comme on le montre ici en ajoutant le contour de la commune dont on ne trace que le contour (`fill = FALSE`)
+
+
+```{r}
+
+map_com <- map_iris %>% summarise()
+nbiris<-dim(map_iris)[1]
+mycolors = rainbow(n=nbiris)
+
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        color = "white",
+                        weight= 1,
+                        opacity = 0.4,
+                        fillColor = mycolors,
+                        fillOpacity = 0.3,
+                        label = ~iris_name) %>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+ 
+map
+```
+
+
+### Cartes choroplèthes avec` colorBin()`
+
+
+De la même manière que nous avons affiché une couleur différente  dans chaque IRIS, nous pouvons proposer une carte choroplèthe et ajouter un popup donnant la valeur de l'indicateur si l'on clique. La seule difficulté est de préparer une palette de couleur à l'aide de l'une des fonction `colorNumeric()`, `colorBin()`, `colorQuantile()` ou `colorFactor()`. 
+
+Voyons un exemple sur la variable app_prixm2_med qui est le prix médian de vente des apparements.  
+
+```{r}
+# Choix de la variable
+   myvar <-round(map_iris$app_prixm2_med,0)
+
+# Choix des classes 
+    mycut<-c(5000, 6000, 7000, 8000,9000,10000, 11000)
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('YlOrRd', 
+                       myvar,
+                       bins=mycut)
+
+
+# Réalisation de la carte
+map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        fillColor = ~mypal(app_prixm2_med),
+                        fillOpacity = 0.5,
+                        color = "white",
+                        label = myvar,
+                    #    label = ~app_prixm2_med,
+ #                       popup = mypop,
+                        weight = 1) %>%
+            addLegend(data = map_iris,
+                      pal = mypal, 
+                      title = "prix au m2",
+                      values =~app_prixm2_med, 
+                      position = 'topright') %>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+ 
+map
+```
+
+
+### Cartes de stock avec `addCircleMarkers()`
+
+Notre carte est intéressante mais elle ne permet pas de voir quelle est la quantité de vente qui a servi de base au calcul du prix médian
+
+Nous allons donc superposer sur la carte précédente le nombre de ventes d'appartement. Puisqu'il s'agit d'un stock, nous devrons utiliser un figuré ponctuel avec une surface proportionnelle au nombre de ventes.
+
+
+```{r}
+# Choix de la variable
+   myvar <-round(map_iris$app_prixm2_med,0)
+
+# Choix des classes 
+    mycut<-c(5000, 6000, 7000, 8000,9000,10000, 11000)
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('YlOrRd', 
+                       myvar,
+                       bins=mycut)
+  
+   
+# Calcul du diamètre des cercles
+   myradius <-8*sqrt(map_iris$app_nb/max(map_iris$app_nb, na.rm=T))
+   
+# Calcul des centroides des iris
+   map_iris_ctr <-st_centroid(map_iris)
+
+   map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 14) %>% 
+            addPolygons(data = map_iris,
+                        fillColor = ~mypal(app_prixm2_med),
+                        fillOpacity = 0.5,
+                        color = "white",
+                        label = myvar,
+ #                       popup = mypop,
+                        weight = 1) %>%
+            addLegend(data = map_iris,
+                      pal = mypal, 
+                      title = "prix médian au m2",
+                      values =~app_prixm2_med, 
+                      position = 'topright') %>%
+            addCircleMarkers(data=map_iris_ctr,
+                          #    lat = ~lat,
+                          #    lng = ~lng,
+                              radius = myradius,
+                              stroke = FALSE,
+                              label = ~app_nb,
+                              fillColor = "gray50",
+                              fillOpacity = 0.5)%>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+   
+map
+```
+
+### La cerise sur le gâteau ...
+
+Et pour terminer notre belle carte, nous allons ajouter une fenêtre popup apportant à l'utilisateur tous les renseignements sur les appartements vendus chaque IRIS. Pour cela nous allons devoir construire chaque fenêtre popup au format HTML préalablement à l'affichage des cartes en utilisant des outils issus sdes packaghes `htmltools`et `htmlwidgets`. On supprime les labels des deux couches, l'utilisateur ayant désormais juste à cliquer sur un Iris pour obtenir tous les renseignements dans une seule fenêtre
+
+
+```{r}
+# Choix de la variable
+   myvar <-round(map_iris$app_prixm2_med,0)
+summary(myvar)
+
+# Choix des classes 
+    mycut<-c(5000, 6000, 7000, 8000,9000,10000, 11000)
+# Choix de la palette (c'est une fonction !)
+   mypal <- colorBin('YlOrRd', 
+                       myvar,
+                       bins=mycut)
+
+   
+# Calcul du diamètre des cercles
+   myradius <-8*sqrt(map_iris$app_nb/max(map_iris$app_nb, na.rm=T))
+   
+# Calcul des centroides des iris
+   map_iris_ctr <-st_centroid(map_iris)
+   
+# Préparation des popups
+      mypopups <- lapply(seq(nrow(map_iris)), function(i) {
+      paste0(  paste("Iris               : " ,map_iris$iris_name[i]), '<br>', 
+               paste("Nb. de ventes      : " ,map_iris$app_nb[i]), '<br>', 
+               paste("Prix de vente moyen: " ,round(map_iris$app_val_mean[i],0)), '<br>',   
+               paste("Surface moyenne    : " ,round(map_iris$app_sup_mean[i],0)), '<br>',    
+               paste("Nb. de pièces moyen: " ,round(map_iris$app_nbp_mean[i],1)), '<br>',                  
+               paste("Prix au m2 médian  :", round(map_iris$app_prixm2_med[i],0))
+            ) 
+            })
+      mypopups<-lapply(mypopups, htmltools::HTML)
+   
+   
+
+   map <- leaflet() %>% 
+            addProviderTiles('Esri.WorldTopoMap') %>%
+            setView(lat = 48.83, lng=2.36, zoom = 13) %>% 
+            addPolygons(data = map_iris,
+                        fillColor = ~mypal(app_prixm2_med),
+                        fillOpacity = 0.5,
+                        color = "white",
+#                        label = ~app_prixm2_med,
+                        popup = mypopups,
+                        weight = 1) %>%
+            addLegend(data = map_iris,
+                      pal = mypal, 
+                      title = "prix médian au m2",
+                      values =~app_prixm2_med, 
+                      position = 'topright') %>%
+            addCircleMarkers(data=map_iris_ctr,
+                          #    lat = ~lat,
+                          #    lng = ~lng,
+                              radius = myradius,
+                              stroke = FALSE,
+#                              label = ~app_nb,
+                              fillColor = "gray50",
+                              fillOpacity = 0.5)%>%
+             addPolygons(data = map_com,
+                         color="black",
+                         weight =2,
+                         fill= FALSE)
+   
+map
+
+
+```
+
