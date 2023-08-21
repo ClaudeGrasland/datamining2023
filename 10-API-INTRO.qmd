@@ -22,7 +22,7 @@ knitr::include_graphics("img/API.jpeg")
 
 ### Définition
 
-On peut partir de la définition suivante  
+On peut partir de la définition suivante  :
 
 > En informatique, API est l'acronyme d'*Application Programming Interface*, que l'on traduit en français par **interface de programmation applicative** ou **interface de programmation d'application**. L'API peut être résumée à une solution informatique qui permet à des applications de communiquer entre elles et de s'échanger mutuellement des services ou des données. Il s'agit en réalité d'un ensemble de fonctions qui facilitent, via un langage de programmation, l'accès aux services d'une application. (Source : [Journal du Net](https://www.journaldunet.fr/web-tech/dictionnaire-du-webmastering/1203559-api-application-programming-interface-definition-traduction/)) 
 
